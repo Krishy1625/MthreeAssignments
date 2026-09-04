@@ -36,12 +36,12 @@ public class Factorial {
 
 		//YOUR CODE STARTS HERE
 
-		 try{
+		 try{ // need to have a try catch to make sure the input is an int incase a user inputs a string
 			 num = scanner.nextInt();
 
 			 if(num <= 0 || num > 10) {
 				 this.printStream.print("Invalid entry. Please enter an integer between 1 and 10, inclusive.");
-				 return -1;
+				 return -1; // -1 since out of bounds
 			 }
 			 else{
 				 return num;
@@ -49,7 +49,7 @@ public class Factorial {
 		 }
 		 catch(InputMismatchException e){
 			 this.printStream.print("Invalid entry. Please enter an integer between 1 and 10, inclusive.");
-			 return -1;
+			 return -1; // -1 since type mismatch
 		 }
 		//YOUR CODE ENDS HERE
 	 }
@@ -66,8 +66,8 @@ public class Factorial {
 		int result = 1;
 		//YOUR CODE STARTS HERE
 
-		 for (int i = 1; i <= num; i++) {
-			 result *= i;
+		 for (int i = 1; i <= num; i++) {  // goes from 1 to n
+			 result *= i; // this is the same as result = result * i
 		 }
 
 		//YOUR CODE ENDS HERE
