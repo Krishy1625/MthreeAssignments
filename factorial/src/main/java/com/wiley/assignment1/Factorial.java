@@ -96,6 +96,4 @@ public class Factorial {
 		System.out.println("Enter an integer between 1 and 10, inclusive.");
 		fact.calculateFactorial();	
 	 }
-
-	
 }
