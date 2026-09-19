@@ -6,5 +6,4 @@ import java.util.List;
 
 public interface ProductDao {
     void loadFile();
-    List<Product> getAllProducts();
 }

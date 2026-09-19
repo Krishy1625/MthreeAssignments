@@ -3,6 +3,7 @@ package flooringmastery.view;
 import flooringmastery.dao.ProductDaoFileImpl;
 import flooringmastery.dao.TaxDao;
 import flooringmastery.dao.TaxDaoFileImpl;
+import flooringmastery.model.Product;
 import flooringmastery.model.Tax;
 
 import java.math.BigDecimal;
@@ -15,8 +16,8 @@ import java.util.Scanner;
 public class UserIOConsoleImpl implements UserIO {
 
     TaxDaoFileImpl taxDao = new TaxDaoFileImpl();
+    ProductDaoFileImpl productDaoFile = new ProductDaoFileImpl();
     private final Scanner sc = new Scanner(System.in);
-    ProductDaoFileImpl productDao = new ProductDaoFileImpl();
 
     @Override
     public void print(String message) {
@@ -148,7 +149,66 @@ public class UserIOConsoleImpl implements UserIO {
         }
     }
 
+    public BigDecimal readArea(String prompt) {
+        print(prompt);
 
+        while(true) {
+            String user_input = sc.nextLine().strip();
+
+            final String hundred = "100";
+
+            final BigDecimal hundred_big_decimal = new BigDecimal(hundred);
+
+            try{
+                BigDecimal area = new BigDecimal(user_input);
+
+                if (area.compareTo(hundred_big_decimal) >= 0) {
+                    return area;
+                }
+                else {
+                    print("Error: Minimum order size is " + hundred_big_decimal + "sq ft");
+                }
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Error: Area is below zero or Number cannot be converted to BigDecimal");
+            }
+
+        }
+    }
+
+    public String readUserProductType(String prompt) {
+
+        Map<String, Product> product = productDaoFile.getAllProducts();
+
+        print(prompt);
+        listAllProductsAndPricingInformation();
+
+        while(true) {
+            String user_input = sc.nextLine().toLowerCase().strip();
+
+            if (product.containsKey(user_input)){
+                return user_input;
+            }
+            else {
+                print("Error: Product type not found.");
+                listAllProductsAndPricingInformation();
+            }
+        }
+    }
+
+    public void listAllProductsAndPricingInformation() {
+        Map<String, Product> product = productDaoFile.getAllProducts();
+
+        final String header = "ProductType, CostPerSquareFoot, LaborCostPerSquareFoot";
+        System.out.println("*** Listing product details ***");
+        System.out.println(header);
+
+        for (Map.Entry<String, Product> entry : product.entrySet()) {
+            System.out.println(entry.getKey() + ", " + entry.getValue().getCostPerSquareFoot() + ", " + entry.getValue().getLabourCostPerSquareFoot());
+        }
+
+        System.out.println("*** Finished listing product details ***");
+    }
 
     public String readUserState(String prompt) {
         Map<String, Tax> tax_map = taxDao.getAllTaxes();
@@ -196,7 +256,9 @@ public class UserIOConsoleImpl implements UserIO {
         //userIOConsoleImpl.readString("Hi");
         //userIOConsoleImpl.readInt("How are you?", 10, 3);
         //userIOConsoleImpl.readDate("Enter a date in the (dd-mm-yyyy) format: ");
-        userIOConsoleImpl.readUserState("Enter a state: ");
+        //userIOConsoleImpl.readUserState("Enter a state: ");
+        //userIOConsoleImpl.readArea("Enter a area: ");
+        userIOConsoleImpl.readUserProductType("Enter a product: ");
     }
 
 

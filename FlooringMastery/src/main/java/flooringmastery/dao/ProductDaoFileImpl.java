@@ -17,7 +17,6 @@ public class ProductDaoFileImpl implements ProductDao {
     private static final String DELIMITER = ",";
 
     Map<String, Product> product_name_map_product_object = new HashMap<>();
-    UserIOConsoleImpl io = new UserIOConsoleImpl();
 
     @Override
     public void loadFile() {
@@ -58,15 +57,16 @@ public class ProductDaoFileImpl implements ProductDao {
         System.out.println(header);
 
         for (Map.Entry<String, Product> entry : product_name_map_product_object.entrySet()) {
-            io.print(entry.getKey() + ", " + entry.getValue().getCostPerSquareFoot() + ", " + entry.getValue().getLabourCostPerSquareFoot());
+            System.out.println(entry.getKey() + ", " + entry.getValue().getCostPerSquareFoot() + ", " + entry.getValue().getLabourCostPerSquareFoot());
         }
 
         System.out.println("*** Finished listing product details ***");
     }
 
-    @Override
-    public List<Product> getAllProducts() {
-        return List.of();
+
+    public Map<String, Product> getAllProducts() {
+        loadFile();
+        return product_name_map_product_object;
     }
 
     public static void main(String[] args) {
