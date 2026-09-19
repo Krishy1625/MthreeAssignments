@@ -235,12 +235,6 @@ public class OrderDaoFileImpl implements OrderDao {
         //remember array lists start from 0 but orders are from 1 onward
     }
 
-    public static void main(String[] args) {
-        OrderDaoFileImpl orderDaoFileImpl = new OrderDaoFileImpl();
-        //orderDaoFileImpl.writeToFIle(LocalDate.now());
-        //.addOrder();
-    }
-
     public void prettyPrint(Order order) {
         io.print(
                 order.getOrderNumber() + DELIMITER +
@@ -273,5 +267,69 @@ public class OrderDaoFileImpl implements OrderDao {
         io.print("Total: " + order.getTotal());
     }
 
+    public void editAnOrder(LocalDate date) {
 
+        io.print("*** EDITING ORDER ***");
+
+        boolean exists = checkFileExists(ORDER_FOLDER + dateToFileName(date));
+
+        if (!exists) {
+            System.out.println("No such file exists currently for this date.");
+        }
+        else{
+            loadOrdersForDate(date);
+
+            if (!order_number_map_order.isEmpty()) {
+                String prompt = "There are " + order_number_map_order.size() + " orders for this date. Which order do you want to edit? ";
+                int user_order_number = io.readInt(prompt, 1, order_number_map_order.size());
+
+                Order order_to_edit = order_number_map_order.get(user_order_number);
+
+                String customer_name = io.readCustomerNameCanBeEmpty("Edit customer name (" + order_to_edit.getCustomerName() + "): ", order_to_edit.getCustomerName());
+                String state = io.readUserStateCanBeEmpty("Edit state name, (" + order_to_edit.getState() + "): ", order_to_edit.getState());
+                String product_type = io.readUserProductTypeCanBeEmpty("Edit product type ("  + order_to_edit.getProductType() + "): ", order_to_edit.getProductType());
+                BigDecimal area = io.readAreaCanBeEmpty("Edit area for this order (" + order_to_edit.getArea() + "): ", order_to_edit.getArea());
+
+                Map<String, Tax> taxes_map = taxDaoFile.getAllTaxes();
+                Map<String, Product> product_map = productDaoFile.getAllProducts();
+
+                BigDecimal material_cost = io.calculateMaterialCost(area, product_map.get(product_type).getCostPerSquareFoot());
+                BigDecimal labour_cost = io.calculateLabourCost(area, product_map.get(product_type).getLabourCostPerSquareFoot());
+                BigDecimal calculated_tax = io.calculateTax(material_cost, labour_cost, taxes_map.get(state).getTaxRate());
+                BigDecimal total = io.calculateTotal(material_cost, labour_cost, calculated_tax);
+
+                Order modified_order = new Order();
+
+                modified_order.setOrderNumber(order_to_edit.getOrderNumber());
+                modified_order.setCustomerName(customer_name);
+                modified_order.setState(state);
+                modified_order.setTaxRate(taxes_map.get(state).getTaxRate());
+                modified_order.setProductType(product_type);
+                modified_order.setArea(area);
+                modified_order.setCostPerSquareFoot(product_map.get(product_type).getCostPerSquareFoot());
+                modified_order.setLabourCostPerSquareFoot(product_map.get(product_type).getLabourCostPerSquareFoot());
+                modified_order.setMaterialCost(material_cost);
+                modified_order.setLabourCost(labour_cost);
+                modified_order.setTax(calculated_tax);
+                modified_order.setTotal(total);
+
+                order_number_map_order.put(modified_order.getOrderNumber(), modified_order);
+
+                detailedPrint(modified_order);
+                prettyPrint(modified_order);
+                System.out.println(order_number_map_order);
+            }
+            else{
+                System.out.println("No orders exists for this date.");
+            }
+        }
+        io.print("*** FINISH EDITING ORDER ***");
+    }
+
+    public static void main(String[] args) {
+        OrderDaoFileImpl orderDaoFileImpl = new OrderDaoFileImpl();
+        //orderDaoFileImpl.writeToFIle(LocalDate.now());
+        //.addOrder();
+        orderDaoFileImpl.editAnOrder(LocalDate.now());
+    }
 }

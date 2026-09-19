@@ -128,6 +128,27 @@ public class UserIOConsoleImpl implements UserIO {
     }
 
 
+    public String readCustomerNameCanBeEmpty(String prompt, String defaultCustomerName) {
+        print(prompt);
+
+        while(true) {
+            String user_input = sc.nextLine().strip();
+
+            String regex = "[a-zA-Z0-9 .,]+"; // + means 1 or more
+
+            if (user_input.isEmpty()) {
+                return defaultCustomerName;
+            }
+            if (!user_input.matches(regex)) {
+                print("Error: Customer name can only consist of");
+                print("alphanumeric characters, periods and commas.");
+            }
+            else{
+                return user_input;
+            }
+        }
+    }
+
     public String readCustomerName(String prompt) {
         print(prompt);
 
@@ -136,7 +157,7 @@ public class UserIOConsoleImpl implements UserIO {
 
             String regex = "[a-zA-Z0-9 .,]+"; // + means 1 or more
 
-            if (user_input.equals("")) {
+            if (user_input.isEmpty()) {
                 print("Error: Customer name cannot be empty.");
             }
             if (!user_input.matches(regex)) {
@@ -176,6 +197,39 @@ public class UserIOConsoleImpl implements UserIO {
         }
     }
 
+
+    public BigDecimal readAreaCanBeEmpty(String prompt, BigDecimal defaultArea) {
+        print(prompt);
+
+        while(true) {
+            String user_input = sc.nextLine().strip();
+
+            if (user_input.isEmpty()) {
+                return defaultArea;
+            }
+
+            final String hundred = "100";
+
+            final BigDecimal hundred_big_decimal = new BigDecimal(hundred);
+
+            try{
+                BigDecimal area = new BigDecimal(user_input);
+
+                if (area.compareTo(hundred_big_decimal) >= 0) {
+                    return area;
+                }
+                else {
+                    print("Error: Minimum order size is " + hundred_big_decimal + "sq ft");
+                }
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Error: Area is below zero or Number cannot be converted to BigDecimal");
+            }
+
+        }
+    }
+
+
     public String readUserProductType(String prompt) {
 
         Map<String, Product> product = productDaoFile.getAllProducts();
@@ -185,6 +239,30 @@ public class UserIOConsoleImpl implements UserIO {
 
         while(true) {
             String user_input = sc.nextLine().toLowerCase().strip();
+
+            if (product.containsKey(user_input)){
+                return user_input;
+            }
+            else {
+                print("Error: Product type not found.");
+                listAllProductsAndPricingInformation();
+            }
+        }
+    }
+
+    public String readUserProductTypeCanBeEmpty(String prompt, String defaultProductType) {
+
+        Map<String, Product> product = productDaoFile.getAllProducts();
+
+        print(prompt);
+        listAllProductsAndPricingInformation();
+
+        while(true) {
+            String user_input = sc.nextLine().toLowerCase().strip();
+
+            if(user_input.isEmpty()) {
+                return defaultProductType;
+            }
 
             if (product.containsKey(user_input)){
                 return user_input;
@@ -229,7 +307,27 @@ public class UserIOConsoleImpl implements UserIO {
                 }
             }
         }
+    }
 
+    public String readUserStateCanBeEmpty(String prompt, String default_state) {
+        Map<String, Tax> tax_map = taxDao.getAllTaxes();
+
+        print(prompt);
+
+        while(true) {
+            String user_input = sc.nextLine().strip().toLowerCase();
+
+            if (tax_map.containsKey(user_input)) {
+                return default_state;
+            }
+            else{
+                print("We cannot find any tax for this state or we cannot sell there.");
+                print("The only valid states are: ");
+                for(Map.Entry<String, Tax> entry : tax_map.entrySet()) {
+                    System.out.println(entry.getKey());
+                }
+            }
+        }
     }
 
 
