@@ -4,6 +4,9 @@ import flooringmastery.view.FlooringMasteryView;
 import flooringmastery.view.UserIO;
 import flooringmastery.view.UserIOConsoleImpl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class FlooringMasteryController {
 
     private UserIO io = new UserIOConsoleImpl();
@@ -21,6 +24,7 @@ public class FlooringMasteryController {
             switch (selection){
                 case 1:
                     io.print("Display Orders");
+                    displayOrders();
                     break;
                 case 2:
                     io.print("Add an Order");
@@ -45,6 +49,22 @@ public class FlooringMasteryController {
     }
 
     public void displayOrders(){
+        io.print("Display Orders Selected");
+        LocalDate date_of_order =  io.readDate("What data would you like to display orders for? (dd-mm-yyyy)");
+        String format_date = date_of_order.format(DateTimeFormatter.ofPattern("MMddyyyy"));
 
+        final String file_template = "Orders_";
+        final String file_format = ".txt";
+
+        System.out.println(file_template + format_date + file_format);
+
+
+
+
+    }
+
+    public static void main(String[] args) {
+        FlooringMasteryController fmc = new FlooringMasteryController();
+        fmc.displayOrders();
     }
 }

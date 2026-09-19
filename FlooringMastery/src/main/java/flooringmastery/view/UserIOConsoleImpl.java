@@ -1,9 +1,9 @@
 package flooringmastery.view;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.util.Scanner;
 
 public class UserIOConsoleImpl implements UserIO {
@@ -40,7 +40,7 @@ public class UserIOConsoleImpl implements UserIO {
 
         if (max < min) {
             System.out.println("Maximum value is lower than minimum value");
-            return -1;
+            System.exit(-1);
         }
 
         print(prompt);
@@ -84,14 +84,36 @@ public class UserIOConsoleImpl implements UserIO {
         }
     }
 
+    public BigDecimal calculateMaterialCost(BigDecimal area, BigDecimal costPerSquareFoot) {
+        return area.multiply(costPerSquareFoot);
+    }
 
+    public BigDecimal LabourCost(BigDecimal area, BigDecimal LabourCostPerSquareFoot) {
+        return area.multiply(LabourCostPerSquareFoot);
+    }
+
+//    public BigDecimal Tax(BigDecimal materialCost, BigDecimal labourCost, BigDecimal taxRate) {
+//
+//
+//        /**
+//         *  DO: Tax rates are stored as whole numbers
+//         */
+//        BigDecimal material_plus_labour_cost = materialCost.add(labourCost);
+//        BigDecimal tax_rate_divided_100 = taxRate.divide(new BigDecimal(100));
+//
+//        return material_plus_labour_cost.multiply(tax_rate_divided_100);
+//    }
+//
+//    public BigDecimal Total(BigDecimal materialCost, BigDecimal labourCost) {
+//
+//    }
 
 
     public static void main(String[] args) {
         UserIOConsoleImpl userIOConsoleImpl = new UserIOConsoleImpl();
         //userIOConsoleImpl.readString("Hi");
-        //userIOConsoleImpl.readInt("How are you?", 10, 30);
-        userIOConsoleImpl.readDate("Enter a date in the (dd-mm-yyyy) format: ");
+        //userIOConsoleImpl.readInt("How are you?", 10, 3);
+        //userIOConsoleImpl.readDate("Enter a date in the (dd-mm-yyyy) format: ");
     }
 }
 
