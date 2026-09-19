@@ -123,7 +123,7 @@ public class UserIOConsoleImpl implements UserIO {
         return area.multiply(costPerSquareFoot);
     }
 
-    public BigDecimal LabourCost(BigDecimal area, BigDecimal LabourCostPerSquareFoot) {
+    public BigDecimal calculateLabourCost(BigDecimal area, BigDecimal LabourCostPerSquareFoot) {
         return area.multiply(LabourCostPerSquareFoot);
     }
 
@@ -234,21 +234,21 @@ public class UserIOConsoleImpl implements UserIO {
 
 
 
-//    public BigDecimal Tax(BigDecimal materialCost, BigDecimal labourCost, BigDecimal taxRate) {
-//
-//
-//        /**
-//         *  DO: Tax rates are stored as whole numbers
-//         */
-//        BigDecimal material_plus_labour_cost = materialCost.add(labourCost);
-//        BigDecimal tax_rate_divided_100 = taxRate.divide(new BigDecimal(100));
-//
-//        return material_plus_labour_cost.multiply(tax_rate_divided_100);
-//    }
-//
-//    public BigDecimal Total(BigDecimal materialCost, BigDecimal labourCost) {
-//
-//    }
+    public BigDecimal calculateTax(BigDecimal materialCost, BigDecimal labourCost, BigDecimal taxRate) {
+
+        /**
+         *  Tax rates are stored as whole numbers
+         */
+
+        BigDecimal material_plus_labour_cost = materialCost.add(labourCost);
+        BigDecimal tax_rate_divided_100 = taxRate.divide(new BigDecimal(100));
+
+        return material_plus_labour_cost.multiply(tax_rate_divided_100);
+    }
+
+    public BigDecimal calculateTotal(BigDecimal materialCost, BigDecimal labourCost, BigDecimal tax) {
+        return materialCost.add(labourCost).add(tax);
+    }
 
 
     public static void main(String[] args) {
@@ -258,7 +258,8 @@ public class UserIOConsoleImpl implements UserIO {
         //userIOConsoleImpl.readDate("Enter a date in the (dd-mm-yyyy) format: ");
         //userIOConsoleImpl.readUserState("Enter a state: ");
         //userIOConsoleImpl.readArea("Enter a area: ");
-        userIOConsoleImpl.readUserProductType("Enter a product: ");
+        //userIOConsoleImpl.readUserProductType("Enter a product: ");
+        userIOConsoleImpl.readCustomerName("Enter Customer Name");
     }
 
 
