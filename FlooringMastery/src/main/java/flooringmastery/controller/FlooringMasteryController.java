@@ -30,7 +30,6 @@ public class FlooringMasteryController {
                     displayOrders();
                     break;
                 case 2:
-                    io.print("Add an Order");
                     addOrder();
                     break;
                 case 3:
@@ -76,6 +75,7 @@ public class FlooringMasteryController {
     }
 
     public void addOrder(){
+        io.print("*** Add Order ***");
         LocalDate users_date = io.readDateAfterToday("Enter order date (must be in the future in the dd-mm-yyyy format): ");
         orderDao.addAnOrder(users_date);
 

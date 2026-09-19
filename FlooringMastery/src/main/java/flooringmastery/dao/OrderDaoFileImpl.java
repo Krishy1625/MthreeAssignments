@@ -48,56 +48,6 @@ public class OrderDaoFileImpl implements OrderDao {
         return null;
     }
 
-    public void writeToFIle(LocalDate date) {
-
-        final String HEARDER = "OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total";
-
-        try {
-            BufferedWriter fw = new BufferedWriter(new FileWriter(ORDER_FOLDER + dateToFileName(date)));
-            fw.write(HEARDER);
-            fw.newLine();
-
-            order_number_map_order.forEach((key, value) -> {
-                try {
-                    fw.write(String.valueOf(value.getOrderNumber()) + DELIMITER +
-                                String.valueOf(value.getCustomerName()) + DELIMITER +
-                                String.valueOf(value.getState()) + DELIMITER +
-                                String.valueOf(value.getTaxRate()) + DELIMITER +
-                                String.valueOf(value.getProductType()) + DELIMITER +
-                                String.valueOf(value.getArea()) + DELIMITER +
-                                String.valueOf(value.getCostPerSquareFoot()) + DELIMITER +
-                                String.valueOf(value.getLabourCostPerSquareFoot()) + DELIMITER +
-                                String.valueOf(value.getMaterialCost()) + DELIMITER +
-                                String.valueOf(value.getLabourCost()) + DELIMITER +
-                                String.valueOf(value.getTax()) + DELIMITER +
-                                String.valueOf(value.getTotal())
-                    );
-                    fw.newLine();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            fw.flush();
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public void writeEverythingToFIle(LocalDate date) {
 
         final String HEARDER = "OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total";
@@ -136,7 +86,6 @@ public class OrderDaoFileImpl implements OrderDao {
         }
     }
 
-
     public void addAnOrder(LocalDate date) {
 
         if (!order_number_map_order.isEmpty()) {
@@ -145,13 +94,21 @@ public class OrderDaoFileImpl implements OrderDao {
 
         loadOrdersForDate(date);
         Order order_to_add = addOrder(date);
-        order_number_map_order.put(order_to_add.getOrderNumber(), order_to_add);
-        writeEverythingToFIle(date);
 
+        System.out.println("*** SUMMARY OF ORDER ***");
+        detailedPrint(order_to_add);
+        System.out.println("*** END OF SUMMARY OF ORDER ***");
+
+        if (confirmOrder()){
+            order_number_map_order.put(order_to_add.getOrderNumber(), order_to_add);
+            writeEverythingToFIle(date);
+        }
     }
 
-
-
+    public boolean confirmOrder() {
+        String confimation = io.readString("Enter Yes or No to confirm adding this order, (Default is NO): ").strip().toLowerCase();
+        return confimation.equals("yes");
+    }
 
     public Order addOrder(LocalDate users_date) {
 
@@ -196,20 +153,12 @@ public class OrderDaoFileImpl implements OrderDao {
         order.setTax(calculated_tax);
         order.setTotal(total);
 
-        prettyPrint(order);
         return order;
     }
 
     public void loadOrdersForDate(LocalDate date) {
 
-        String format_date = date.format(DateTimeFormatter.ofPattern("MMddyyyy"));
-
-        final String file_template = "Orders_";
-        final String file_format = ".txt";
-
-        String file_name = file_template + format_date + file_format;
-
-        File file = new File(ORDER_FOLDER + file_name);
+        File file = new File(ORDER_FOLDER + dateToFileName(date));
 
         try (Scanner sc = new Scanner(file)) {
 
@@ -225,7 +174,8 @@ public class OrderDaoFileImpl implements OrderDao {
                 order_number_map_order.put(Integer.valueOf(order_split[0]), order);
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Product file not found: " + file);
+            // just means file order_number_map_order will be empty
+            System.out.println("No such file exists currently for this date.");
         }
     }
 
@@ -306,6 +256,21 @@ public class OrderDaoFileImpl implements OrderDao {
                 order.getTax() + DELIMITER +
                 order.getTotal()
                 );
+    }
+
+    public void detailedPrint(Order order) {
+        io.print("Order Number: " + order.getOrderNumber());
+        io.print("Customer Name: " + order.getCustomerName());
+        io.print("State: " + order.getState());
+        io.print("Tax Rate: " + order.getTaxRate());
+        io.print("Product Type: " + order.getProductType());
+        io.print("Area: " + order.getArea());
+        io.print("Cost PerSquare Foot: " + order.getCostPerSquareFoot());
+        io.print("Labour Cost PerSquare: " + order.getLabourCostPerSquareFoot());
+        io.print("Material Cost: " + order.getMaterialCost());
+        io.print("Labour Cost: " + order.getLabourCost());
+        io.print("Tax: " + order.getTax());
+        io.print("Total: " + order.getTotal());
     }
 
 
