@@ -48,4 +48,18 @@ public class Order {
     public void setLabourCost(BigDecimal labourCost) {this.labourCost = labourCost;}
     public void setTax(BigDecimal tax) {this.tax = tax;}
     public void setTotal(BigDecimal total) {this.total = total;}
+
+    // got a bit annoyed so made some overloaded setters with strings to big decimals
+    public void setTaxRate(String taxRate) {this.taxRate = new BigDecimal(taxRate);}
+    public void setTotal(String total) {this.total = new BigDecimal(total);}
+    public void setCostPerSquareFoot(String costPerSquareFoot){this.costPerSquareFoot = new BigDecimal(costPerSquareFoot);}
+    public void setLabourCostPerSquareFoot(String labourCostPerSquareFoot){this.labourCostPerSquareFoot = new BigDecimal(labourCostPerSquareFoot);}
+    public void setMaterialCost(String materialCost){this.materialCost = new BigDecimal(materialCost);}
+    public void setArea(String area){this.area = new BigDecimal(area);}
+    public void setLabourCost(String labourCost){this.labourCost = new BigDecimal(labourCost);}
+    public void setTax(String tax){this.tax = new BigDecimal(tax);}
+    public void setOrderNumber(String orderNumber){this.orderNumber = Integer.parseInt(orderNumber);}
+
+
 }
+

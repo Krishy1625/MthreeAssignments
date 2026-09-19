@@ -1,6 +1,7 @@
 package flooringmastery.dao;
 
 import flooringmastery.model.Product;
+import flooringmastery.view.UserIOConsoleImpl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +17,7 @@ public class ProductDaoFileImpl implements ProductDao {
     private static final String DELIMITER = ",";
 
     Map<String, Product> product_name_map_product_object = new HashMap<>();
+    UserIOConsoleImpl io = new UserIOConsoleImpl();
 
     @Override
     public void loadFile() {
@@ -32,7 +34,7 @@ public class ProductDaoFileImpl implements ProductDao {
                 String[] product_split =  sc.nextLine().trim().split(DELIMITER);
                 Product product = new Product();
 
-                product.setProductType(product_split[0]);
+                product.setProductType(product_split[0].toLowerCase());
 
                 BigDecimal cost_per_square_foot = new  BigDecimal(product_split[1]);
                 product.setCostPerSquareFoot(cost_per_square_foot);
@@ -40,15 +42,26 @@ public class ProductDaoFileImpl implements ProductDao {
                 BigDecimal labour_cost_per_square_foot = new BigDecimal(product_split[2]);
                 product.setLabourCostPerSquareFoot(labour_cost_per_square_foot);
 
-                product_name_map_product_object.put(product_split[0],product);
+                product_name_map_product_object.put(product_split[0].toLowerCase(), product);
             }
-
-            System.out.println(product_name_map_product_object);
-
         }
         catch (FileNotFoundException e) {
             System.out.println("Product file not found: " + PRODUCT_FILE);
         }
+    }
+
+    public void listAllProductsAndPricingInformation() {
+        loadFile();
+
+        final String header = "ProductType, CostPerSquareFoot, LaborCostPerSquareFoot";
+        System.out.println("*** Listing product details ***");
+        System.out.println(header);
+
+        for (Map.Entry<String, Product> entry : product_name_map_product_object.entrySet()) {
+            io.print(entry.getKey() + ", " + entry.getValue().getCostPerSquareFoot() + ", " + entry.getValue().getLabourCostPerSquareFoot());
+        }
+
+        System.out.println("*** Finished listing product details ***");
     }
 
     @Override
@@ -58,6 +71,6 @@ public class ProductDaoFileImpl implements ProductDao {
 
     public static void main(String[] args) {
         ProductDaoFileImpl productDaoFileImpl = new ProductDaoFileImpl();
-        productDaoFileImpl.loadFile();
+        productDaoFileImpl.listAllProductsAndPricingInformation();
     }
 }

@@ -1,16 +1,20 @@
 package flooringmastery.controller;
 
+import flooringmastery.dao.OrderDaoFileImpl;
+import flooringmastery.model.Order;
 import flooringmastery.view.FlooringMasteryView;
 import flooringmastery.view.UserIO;
 import flooringmastery.view.UserIOConsoleImpl;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class FlooringMasteryController {
 
     private UserIO io = new UserIOConsoleImpl();
     private FlooringMasteryView view = new FlooringMasteryView();
+    private OrderDaoFileImpl orderDao = new OrderDaoFileImpl();
 
     public void run(){
 
@@ -23,7 +27,6 @@ public class FlooringMasteryController {
 
             switch (selection){
                 case 1:
-                    io.print("Display Orders");
                     displayOrders();
                     break;
                 case 2:
@@ -49,22 +52,39 @@ public class FlooringMasteryController {
     }
 
     public void displayOrders(){
-        io.print("Display Orders Selected");
-        LocalDate date_of_order =  io.readDate("What data would you like to display orders for? (dd-mm-yyyy)");
-        String format_date = date_of_order.format(DateTimeFormatter.ofPattern("MMddyyyy"));
 
-        final String file_template = "Orders_";
-        final String file_format = ".txt";
+        final String comma = ", ";
+        ArrayList<Order> list_of_orders = (ArrayList<Order>) orderDao.getOrdersForDate();
+        for (int i = 0; i < list_of_orders.size(); i++){
 
-        System.out.println(file_template + format_date + file_format);
-
-
-
-
+            io.print("Order #" + (i + 1) + ": ");
+            Order order = list_of_orders.get(i);
+            io.print(
+                    order.getCustomerName() + comma
+                    + order.getState()  + comma
+                    + order.getTaxRate()  + comma
+                    + order.getProductType()   + comma
+                    + order.getArea()  + comma
+                    + order.getCostPerSquareFoot()  + comma
+                    + order.getLabourCostPerSquareFoot()  + comma
+                    + order.getMaterialCost()    + comma
+                    + order.getLabourCost()     + comma
+                    + order.getTax()   + comma
+                    + order.getTotal());
+        }
     }
+
+
+
+
+
+
+
+
+
 
     public static void main(String[] args) {
         FlooringMasteryController fmc = new FlooringMasteryController();
-        fmc.displayOrders();
+        fmc.run();
     }
 }

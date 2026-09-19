@@ -5,17 +5,14 @@ import flooringmastery.model.Tax;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class TaxDaoFileImpl implements TaxDao {
 
     private static final String TAX_FILE= "src/main/resources/SampleFileData/Data/Taxes.txt";
     private static final String DELIMITER = ",";
 
-    Map<String, Tax> abbreviation_map_taxes = new HashMap<>();
+    Map<String, Tax> state_map_taxes = new HashMap<>();
 
     @Override
     public void loadFile() {
@@ -38,19 +35,18 @@ public class TaxDaoFileImpl implements TaxDao {
                 BigDecimal tax_rate = new BigDecimal(tax[2]); // tax[2] is string for exact calculations with BigD
                 tax_obj.setTaxRate(tax_rate);
 
-                abbreviation_map_taxes.put(tax[0],tax_obj);
+                state_map_taxes.put(tax[1].toLowerCase(),tax_obj);
             }
-
         }
         catch (FileNotFoundException e) {
             System.out.println("Tax file not found: " + TAX_FILE);
         }
-
     }
 
     @Override
-    public List<Tax> getAllTaxes() {
-        return List.of();
+    public Map<String, Tax> getAllTaxes() {
+        loadFile();
+        return state_map_taxes;
     }
 
     public static void main(String[] args) {
