@@ -29,7 +29,6 @@ public class OrderDaoFileImpl implements OrderDao {
         final String FILE_FORMAT = ".txt";
 
         String formatted_date = format_date.format(DateTimeFormatter.ofPattern("MMddyyyy"));
-        ;
 
         return FILE_TEMPLATE + formatted_date + FILE_FORMAT;
     }
@@ -53,24 +52,14 @@ public class OrderDaoFileImpl implements OrderDao {
 
         final String HEARDER = "OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total";
 
-        if (!order_number_map_order.isEmpty()) {
-            order_number_map_order.clear();
-        }
-        ;
+        try {
+            BufferedWriter fw = new BufferedWriter(new FileWriter(ORDER_FOLDER + dateToFileName(date)));
+            fw.write(HEARDER);
+            fw.newLine();
 
-        loadOrdersForDate(stringToDate("01-06-2013"));
-
-        if (checkFileExists(ORDER_FOLDER + dateToFileName(date))) {
-            System.out.println("Order File Exists");
-        } else {
-            try {
-                BufferedWriter fw = new BufferedWriter(new FileWriter(ORDER_FOLDER + dateToFileName(date)));
-                fw.write(HEARDER);
-                fw.newLine();
-
-                order_number_map_order.forEach((key, value) -> {
-                    try {
-                        fw.write(String.valueOf(value.getOrderNumber()) + DELIMITER +
+            order_number_map_order.forEach((key, value) -> {
+                try {
+                    fw.write(String.valueOf(value.getOrderNumber()) + DELIMITER +
                                 String.valueOf(value.getCustomerName()) + DELIMITER +
                                 String.valueOf(value.getState()) + DELIMITER +
                                 String.valueOf(value.getTaxRate()) + DELIMITER +
@@ -82,25 +71,92 @@ public class OrderDaoFileImpl implements OrderDao {
                                 String.valueOf(value.getLabourCost()) + DELIMITER +
                                 String.valueOf(value.getTax()) + DELIMITER +
                                 String.valueOf(value.getTotal())
-                        );
-                        fw.newLine();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                    );
+                    fw.newLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
 
-                fw.flush();
-                fw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    public Order addOrder() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void writeEverythingToFIle(LocalDate date) {
+
+        final String HEARDER = "OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total";
+
+        try {
+            BufferedWriter fw = new BufferedWriter(new FileWriter(ORDER_FOLDER + dateToFileName(date)));
+            fw.write(HEARDER);
+            fw.newLine();
+
+            order_number_map_order.forEach((key, value) -> {
+                try {
+                    fw.write(String.valueOf(value.getOrderNumber()) + DELIMITER +
+                            String.valueOf(value.getCustomerName()) + DELIMITER +
+                            String.valueOf(value.getState()) + DELIMITER +
+                            String.valueOf(value.getTaxRate()) + DELIMITER +
+                            String.valueOf(value.getProductType()) + DELIMITER +
+                            String.valueOf(value.getArea()) + DELIMITER +
+                            String.valueOf(value.getCostPerSquareFoot()) + DELIMITER +
+                            String.valueOf(value.getLabourCostPerSquareFoot()) + DELIMITER +
+                            String.valueOf(value.getMaterialCost()) + DELIMITER +
+                            String.valueOf(value.getLabourCost()) + DELIMITER +
+                            String.valueOf(value.getTax()) + DELIMITER +
+                            String.valueOf(value.getTotal())
+                    );
+                    fw.newLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            fw.flush();
+            fw.close();
+
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public void addAnOrder(LocalDate date) {
+
+        if (!order_number_map_order.isEmpty()) {
+            order_number_map_order.clear();
+        }
+
+        loadOrdersForDate(date);
+        Order order_to_add = addOrder(date);
+        order_number_map_order.put(order_to_add.getOrderNumber(), order_to_add);
+        writeEverythingToFIle(date);
+
+    }
+
+
+
+
+    public Order addOrder(LocalDate users_date) {
 
         io.print("*** Add an order ***");
-        LocalDate users_date = io.readDateAfterToday("Enter order date (must be in the future in the dd-mm-yyyy format): ");
+        //LocalDate users_date = io.readDateAfterToday("Enter order date (must be in the future in the dd-mm-yyyy format): ");
 
         int order_number = 1;
 
@@ -137,10 +193,10 @@ public class OrderDaoFileImpl implements OrderDao {
         order.setLabourCostPerSquareFoot(product_map.get(product_type).getLabourCostPerSquareFoot());
         order.setMaterialCost(material_cost);
         order.setLabourCost(labour_cost);
-        order.setTotal(calculated_tax);
+        order.setTax(calculated_tax);
         order.setTotal(total);
 
-        System.out.println(order);
+        prettyPrint(order);
         return order;
     }
 
@@ -232,11 +288,24 @@ public class OrderDaoFileImpl implements OrderDao {
     public static void main(String[] args) {
         OrderDaoFileImpl orderDaoFileImpl = new OrderDaoFileImpl();
         //orderDaoFileImpl.writeToFIle(LocalDate.now());
-        orderDaoFileImpl.addOrder();
+        //.addOrder();
     }
 
     public void prettyPrint(Order order) {
-        io.print(order.toString());
+        io.print(
+                order.getOrderNumber() + DELIMITER +
+                order.getCustomerName() + DELIMITER +
+                order.getState() + DELIMITER +
+                order.getTaxRate() + DELIMITER +
+                order.getProductType() + DELIMITER +
+                order.getArea() + DELIMITER +
+                order.getCostPerSquareFoot() + DELIMITER +
+                order.getLabourCostPerSquareFoot() + DELIMITER +
+                order.getMaterialCost() + DELIMITER +
+                order.getLabourCost() + DELIMITER +
+                order.getTax() + DELIMITER +
+                order.getTotal()
+                );
     }
 
 

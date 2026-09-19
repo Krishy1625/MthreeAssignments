@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class FlooringMasteryController {
 
-    private UserIO io = new UserIOConsoleImpl();
+    private UserIOConsoleImpl io = new UserIOConsoleImpl();
     private FlooringMasteryView view = new FlooringMasteryView();
     private OrderDaoFileImpl orderDao = new OrderDaoFileImpl();
 
@@ -31,6 +31,7 @@ public class FlooringMasteryController {
                     break;
                 case 2:
                     io.print("Add an Order");
+                    addOrder();
                     break;
                 case 3:
                     io.print("Edit an Order");
@@ -74,14 +75,11 @@ public class FlooringMasteryController {
         }
     }
 
+    public void addOrder(){
+        LocalDate users_date = io.readDateAfterToday("Enter order date (must be in the future in the dd-mm-yyyy format): ");
+        orderDao.addAnOrder(users_date);
 
-
-
-
-
-
-
-
+    }
 
     public static void main(String[] args) {
         FlooringMasteryController fmc = new FlooringMasteryController();

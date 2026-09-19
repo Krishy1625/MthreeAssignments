@@ -259,7 +259,10 @@ public class UserIOConsoleImpl implements UserIO {
         //userIOConsoleImpl.readUserState("Enter a state: ");
         //userIOConsoleImpl.readArea("Enter a area: ");
         //userIOConsoleImpl.readUserProductType("Enter a product: ");
-        userIOConsoleImpl.readCustomerName("Enter Customer Name");
+        //userIOConsoleImpl.readCustomerName("Enter Customer Name");
+         BigDecimal ans = userIOConsoleImpl.calculateTax(new BigDecimal(2134.5435), new BigDecimal(1234.213), new BigDecimal(1235423.5432));
+
+        System.out.println(ans);
     }
 
 
