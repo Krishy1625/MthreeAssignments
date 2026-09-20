@@ -35,6 +35,20 @@ public class UserIOConsoleImpl implements UserIO {
     }
 
     @Override
+    public int readInt(String prompt) {
+        print(prompt);
+
+        while(!sc.hasNextInt()) {
+            sc.nextLine();
+            print(prompt);
+        }
+
+        int user_result = sc.nextInt();
+        sc.nextLine();
+        return user_result;
+    }
+
+    @Override
     public int readInt(String prompt, int min, int max) {
 
         print(prompt);
@@ -101,14 +115,6 @@ public class UserIOConsoleImpl implements UserIO {
                 print(prompt);
             }
         }
-    }
-
-    public BigDecimal calculateMaterialCost(BigDecimal area, BigDecimal costPerSquareFoot) {
-        return area.multiply(costPerSquareFoot);
-    }
-
-    public BigDecimal calculateLabourCost(BigDecimal area, BigDecimal LabourCostPerSquareFoot) {
-        return area.multiply(LabourCostPerSquareFoot);
     }
 
     public String readCustomerNameCanBeEmpty(String prompt, String defaultCustomerName) {
@@ -261,14 +267,18 @@ public class UserIOConsoleImpl implements UserIO {
         Map<String, Product> product = productDaoFile.getAllProducts();
 
         final String header = "ProductType, CostPerSquareFoot, LaborCostPerSquareFoot";
+        System.out.println();
         System.out.println("*** Listing product details ***");
+        System.out.println();
         System.out.println(header);
 
         for (Map.Entry<String, Product> entry : product.entrySet()) {
             System.out.println(entry.getKey() + ", " + entry.getValue().getCostPerSquareFoot() + ", " + entry.getValue().getLabourCostPerSquareFoot());
         }
 
+        System.out.println();
         System.out.println("*** Finished listing product details ***");
+        System.out.println();
     }
 
     public String readUserState(String prompt) {
@@ -315,24 +325,6 @@ public class UserIOConsoleImpl implements UserIO {
                 }
             }
         }
-    }
-
-
-
-    public BigDecimal calculateTax(BigDecimal materialCost, BigDecimal labourCost, BigDecimal taxRate) {
-
-        /**
-         *  Tax rates are stored as whole numbers
-         */
-
-        BigDecimal material_plus_labour_cost = materialCost.add(labourCost);
-        BigDecimal tax_rate_divided_100 = taxRate.divide(new BigDecimal(100));
-
-        return material_plus_labour_cost.multiply(tax_rate_divided_100);
-    }
-
-    public BigDecimal calculateTotal(BigDecimal materialCost, BigDecimal labourCost, BigDecimal tax) {
-        return materialCost.add(labourCost).add(tax);
     }
 }
 

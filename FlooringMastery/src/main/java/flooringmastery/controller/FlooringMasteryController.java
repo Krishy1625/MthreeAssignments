@@ -1,33 +1,31 @@
 package flooringmastery.controller;
 
+import flooringmastery.model.Order;
 import flooringmastery.service.FlooringMasteryServiceLayer;
 import flooringmastery.view.FlooringMasteryView;
-import flooringmastery.view.UserIO;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class FlooringMasteryController {
 
-    private UserIO io;
     private FlooringMasteryView view;
     private FlooringMasteryServiceLayer service;
 
-    public FlooringMasteryController(UserIO io, FlooringMasteryView view, FlooringMasteryServiceLayer service) {
-        this.io = io;
+    public FlooringMasteryController(FlooringMasteryView view, FlooringMasteryServiceLayer service) {
         this.view = view;
         this.service = service;
     }
 
-    public void run(){
+    public void run() {
 
         boolean keepRunning = true;
-        int selection;
 
-        while(keepRunning){
+        while (keepRunning) {
 
-            selection = view.displayMainMenuAndGetSelection();
+            int selection = view.displayMainMenuAndGetSelection();
 
-            switch (selection){
+            switch (selection) {
                 case 1:
                     displayOrders();
                     break;
@@ -53,33 +51,96 @@ public class FlooringMasteryController {
         view.exitMessage();
     }
 
-    public void displayOrders(){
-        io.print("*** DISPLAYING ORDERS ***");
-        LocalDate user_date = io.readDate("What date do you want to display orders for?");
-        service.displayOrdersForDate(user_date);
+    public void displayOrders() {
+        LocalDate date = view.getOrderDate();
+        List<Order> orders = service.getOrdersForDate(date);
+        if (orders.isEmpty()) {
+            view.displayNoOrdersForDate();
+        } else {
+            view.displayOrders(orders);
+        }
     }
 
-    public void addOrder(){
-        io.print("*** Add Order ***");
-        LocalDate users_date = io.readDateAfterToday("Enter order date (must be in the future in the dd-mm-yyyy format): ");
-        service.addAndWriteOrder(users_date);
+    public void addOrder() {
+        LocalDate date = view.getFutureOrderDate();
+
+        Order order = view.getNewOrderInfo();
+
+        order.setOrderNumber(service.getNextOrderNumber(date));
+        order = service.calculateOrder(order);
+
+        view.displayOrderSummary(order);
+
+        if (view.confirm("Enter Yes or No to confirm ADDING this order, (Default is NO): ")) {
+            service.saveOrder(date, order);
+            view.displaySuccess("ORDER SUCCESSFULLY ADDED");
+        } else {
+            view.displaySuccess("Order not added.");
+        }
     }
 
-    public void editOrder(){
-        io.print("*** Edit Order ***");
-        LocalDate userdate = io.readDate("Enter order date to be edited: ");
-        service.editedOrderFinal(userdate);
+    public void editOrder() {
+        LocalDate date = view.getOrderDate();
+
+        List<Order> orders = service.getOrdersForDate(date);
+        if (orders.isEmpty()) {
+            view.displayNoOrdersForDate();
+            return;
+        }
+
+        view.displayOrders(orders);
+        int orderNumber = view.getOrderNumber();
+
+        Order existing = service.getOrderForDate(date, orderNumber);
+        if (existing == null) {
+            view.displayError("No order #" + orderNumber + " exists for that date.");
+            return;
+        }
+
+        Order updated = view.getEditedOrderInfo(existing);
+        updated = service.calculateOrder(updated);
+
+        view.displayOrderSummary(updated);
+
+        if (view.confirm("Enter Yes or No to confirm EDITING this order, (Default is NO): ")) {
+            service.saveOrder(date, updated);
+            view.displaySuccess("ORDER SUCCESSFULLY EDITED");
+        } else {
+            view.displaySuccess("Order not edited.");
+        }
     }
 
-    public void removeOrder(){
-        io.print("*** Remove Order ***");
-        LocalDate user_date = io.readDate("Enter order date to be removed: ");
-        service.removeAnOrder(user_date);
+    public void removeOrder() {
+        LocalDate date = view.getOrderDate();
+
+        List<Order> orders = service.getOrdersForDate(date);
+        if (orders.isEmpty()) {
+            view.displayNoOrdersForDate();
+            return;
+        }
+
+        view.displayOrders(orders);
+        int orderNumber = view.getOrderNumber();
+
+        Order existing = service.getOrderForDate(date, orderNumber);
+        if (existing == null) {
+
+            view.displayError("No order #" + orderNumber + " exists for that date.");
+            return;
+        }
+
+        view.displayOrderSummary(existing);
+
+        if (view.confirm("Enter Yes or No to confirm DELETING this order, (Default is NO): ")) {
+            service.deleteOrder(date, orderNumber);
+            view.displaySuccess("ORDER SUCCESSFULLY REMOVED");
+        } else {
+            view.displaySuccess("Order not removed.");
+        }
     }
 
-    public void exportAllData(){
-        io.print("*** Export All Data ***");
-        service.exportAllDataFinal();
-        io.print("*** DATA EXPORTED TO 'DataExport.txt' UNDER THE 'Backup' FOLDER ***");
+    public void exportAllData() {
+        service.exportAllData();
+        view.displayExportSuccess();
     }
 }

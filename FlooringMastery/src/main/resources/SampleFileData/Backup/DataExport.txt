@@ -58,8 +58,6 @@ OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot:
 
 OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
 1::Ada Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
-2::YO BOI Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
-3::Pikachu::washington::9.25::laminate::200::1.75::2.10::350.00::420.00::71.225000::841.225000
 
 *** END OF ORDERS FOR 2026-09-20 ***
 
@@ -69,6 +67,8 @@ OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot:
 1::Ada Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
 3::Lucamine::washington::9.25::carpet::100::2.25::2.10::225.00::210.00::40.237500::475.237500
 4::Krish::kentucky::6.00::laminate::100::1.75::2.10::175.00::210.00::23.1000::408.1000
+5::meeee::kentucky::6.00::carpet::200::2.25::2.10::450.00::420.00::52.2000::922.2000
+6::hellasdpw qhfpe::texas::4.45::wood::200::5.15::4.75::1030.00::950.00::88.110000::2068.110000
 
 *** END OF ORDERS FOR 2026-09-21 ***
 

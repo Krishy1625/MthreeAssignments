@@ -18,17 +18,17 @@
     </bean>
 
     <bean id="orderDao" class="flooringmastery.dao.OrderDaoFileImpl">
-        <constructor-arg ref="io" />
         <constructor-arg ref="productDao" />
         <constructor-arg ref="taxDao" />
     </bean>
 
     <bean id="service" class="flooringmastery.service.FlooringMasteryServiceLayerImpl">
         <constructor-arg ref="orderDao" />
+        <constructor-arg ref="productDao" />
+        <constructor-arg ref="taxDao" />
     </bean>
 
     <bean id="controller" class="flooringmastery.controller.FlooringMasteryController">
-        <constructor-arg ref="io" />
         <constructor-arg ref="view" />
         <constructor-arg ref="service" />
     </bean>

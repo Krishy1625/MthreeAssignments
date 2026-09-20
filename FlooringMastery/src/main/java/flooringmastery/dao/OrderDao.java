@@ -1,11 +1,14 @@
 package flooringmastery.dao;
 
+import flooringmastery.model.Order;
+
 import java.time.LocalDate;
+import java.util.List;
 
 public interface OrderDao {
-    void addAndWriteOrder(LocalDate date);
-    void displayOrdersForDate(LocalDate date);
-    void editedOrderFinal(LocalDate date);
-    void removeAnOrder(LocalDate date);
-    void exportAllDataFinal();
+    List<Order> getOrders(LocalDate date);
+    Order getOrder(LocalDate date, int orderNumber);
+    void saveOrder(LocalDate date, Order order);
+    void deleteOrder(LocalDate date, int orderNumber);
+    void exportAllData();
 }
