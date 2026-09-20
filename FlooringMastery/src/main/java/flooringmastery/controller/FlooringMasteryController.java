@@ -39,7 +39,7 @@ public class FlooringMasteryController {
                     removeOrder();
                     break;
                 case 5:
-                    io.print("Export All Data");
+                    exportAllData();
                     break;
                 case 6:
                     keepRunning = false;
@@ -73,6 +73,12 @@ public class FlooringMasteryController {
         io.print("*** Remove Order ***");
         LocalDate user_date = io.readDate("Enter order date to be removed: ");
         orderDao.removeAnOrder(user_date);
+    }
+
+    public void exportAllData(){
+        io.print("*** Export All Data ***");
+        orderDao.exportAllDataFinal();
+        io.print("*** DATA EXPORTED TO 'DataExport.txt' UNDER THE 'Backup' FOLDER ***");
     }
 
     public static void main(String[] args) {
