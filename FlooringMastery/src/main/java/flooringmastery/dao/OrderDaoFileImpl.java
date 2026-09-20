@@ -117,12 +117,35 @@ public class OrderDaoFileImpl implements OrderDao {
 
                 if(userConfirmation("Enter Yes or No to confirm DELETING this order, (Default is NO): ")){
                     order_number_map_order.remove(user_order_number);
+                    renumberOrderAfterDeleting();
                     writeEverythingToFIle(date);
                     io.print("*** ORDER SUCCESSFULLY REMOVED ***");
                 }
             }
         }
     }
+
+    public void renumberOrderAfterDeleting(){
+        Map<Integer, Order> order_map = new HashMap<>();
+
+        int new_order_number = 1;
+
+        for (int i = 1; i <= order_number_map_order.size() + 1; i++) {
+
+            if (order_number_map_order.containsKey(i)) {
+
+                Order order = order_number_map_order.get(i);
+
+                order.setOrderNumber(new_order_number);
+
+                order_map.put(new_order_number, order);
+
+                new_order_number++;
+            }
+        }
+        order_number_map_order = order_map;
+    }
+
 
     public static ArrayList<String> getOrderFileDates() {
 
