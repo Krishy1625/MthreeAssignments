@@ -1,28 +1,27 @@
 package flooringmastery.controller;
 
-import flooringmastery.dao.OrderDaoFileImpl;
+import flooringmastery.service.FlooringMasteryServiceLayer;
 import flooringmastery.view.FlooringMasteryView;
 import flooringmastery.view.UserIO;
 
 import java.time.LocalDate;
 
-
 public class FlooringMasteryController {
 
     private UserIO io;
     private FlooringMasteryView view;
-    private OrderDaoFileImpl orderDao;
+    private FlooringMasteryServiceLayer service;
 
-    public FlooringMasteryController(UserIO io, FlooringMasteryView view, OrderDaoFileImpl orderDao) {
+    public FlooringMasteryController(UserIO io, FlooringMasteryView view, FlooringMasteryServiceLayer service) {
         this.io = io;
         this.view = view;
-        this.orderDao = orderDao;
+        this.service = service;
     }
 
     public void run(){
 
         boolean keepRunning = true;
-        int selection = 0;
+        int selection;
 
         while(keepRunning){
 
@@ -57,30 +56,30 @@ public class FlooringMasteryController {
     public void displayOrders(){
         io.print("*** DISPLAYING ORDERS ***");
         LocalDate user_date = io.readDate("What date do you want to display orders for?");
-        orderDao.displayOrdersForDate(user_date);
+        service.displayOrdersForDate(user_date);
     }
 
     public void addOrder(){
         io.print("*** Add Order ***");
         LocalDate users_date = io.readDateAfterToday("Enter order date (must be in the future in the dd-mm-yyyy format): ");
-        orderDao.addAndWriteOrder(users_date);
+        service.addAndWriteOrder(users_date);
     }
 
     public void editOrder(){
         io.print("*** Edit Order ***");
         LocalDate userdate = io.readDate("Enter order date to be edited: ");
-        orderDao.editedOrderFinal(userdate);
+        service.editedOrderFinal(userdate);
     }
 
     public void removeOrder(){
         io.print("*** Remove Order ***");
         LocalDate user_date = io.readDate("Enter order date to be removed: ");
-        orderDao.removeAnOrder(user_date);
+        service.removeAnOrder(user_date);
     }
 
     public void exportAllData(){
         io.print("*** Export All Data ***");
-        orderDao.exportAllDataFinal();
+        service.exportAllDataFinal();
         io.print("*** DATA EXPORTED TO 'DataExport.txt' UNDER THE 'Backup' FOLDER ***");
     }
 }

@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class OrderDaoFileImpl implements OrderDao {
 
@@ -125,7 +126,6 @@ public class OrderDaoFileImpl implements OrderDao {
 
                 if(userConfirmation("Enter Yes or No to confirm DELETING this order, (Default is NO): ")){
                     order_number_map_order.remove(user_order_number);
-                    renumberOrderAfterDeleting();
                     writeEverythingToFIle(date);
                     io.print("*** ORDER SUCCESSFULLY REMOVED ***");
                 }
@@ -133,50 +133,20 @@ public class OrderDaoFileImpl implements OrderDao {
         }
     }
 
-    public void renumberOrderAfterDeleting(){
-        Map<Integer, Order> order_map = new HashMap<>();
-
-        int new_order_number = 1;
-
-        for (int i = 1; i <= order_number_map_order.size() + 1; i++) {
-
-            if (order_number_map_order.containsKey(i)) {
-
-                Order order = order_number_map_order.get(i);
-
-                order.setOrderNumber(new_order_number);
-
-                order_map.put(new_order_number, order);
-
-                new_order_number++;
-            }
-        }
-        order_number_map_order = order_map;
-    }
-
-
     public static ArrayList<String> getOrderFileDates() {
-
-        ArrayList<String> orderDates = new ArrayList<>();
-
         File folder = new File(ORDER_FOLDER);
-
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".txt"));
 
-        if (files != null) {
-            for (File file : files) {
-
-                String fileName = file.getName();
-
-                String middle = fileName.substring(
-                        "Orders_".length(),
-                        fileName.length() - ".txt".length()
-                );
-
-                orderDates.add(middle);
-            }
+        if (files == null) {
+            return new ArrayList<>();
         }
-        return orderDates;
+
+        return (ArrayList<String>) Arrays.stream(files)
+                .map(File::getName)   // .map((f) -> f.getName()) ide suggestion
+                .map((name) -> name.substring(
+                        "Orders_".length(),
+                        name.length() - ".txt".length()))
+                .collect(Collectors.toList());
     }
 
     public LocalDate stringToDate(String date) {
@@ -333,24 +303,17 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     public void loadOrdersForDate(LocalDate date) {
-
         File file = new File(ORDER_FOLDER + dateToFileName(date));
 
-        try (Scanner sc = new Scanner(file)) {
+        try {
+            Files.lines(file.toPath())
+                    .skip(1)                                    // skip the header line
+                    .map(String::trim)
+                    .map((line) -> line.split(DELIMITER))
+                    .map(OrderDaoFileImpl::createOrder)
+                    .forEach((order) -> order_number_map_order.put(order.getOrderNumber(), order));
 
-            if (sc.hasNextLine()) {
-                sc.nextLine(); // get rid of the headers
-            }
-
-            while (sc.hasNextLine()) {
-
-                String[] order_split = sc.nextLine().trim().split(DELIMITER);
-                Order order = createOrder(order_split);
-
-                order_number_map_order.put(Integer.valueOf(order_split[0]), order);
-            }
-        } catch (FileNotFoundException e) {
-            // just means file order_number_map_order will be empty
+        } catch (IOException e) {
             System.out.println("No such file exists currently for this date.");
         }
     }
@@ -399,11 +362,12 @@ public class OrderDaoFileImpl implements OrderDao {
         int order_number = 1;
 
         if (checkFileExists(ORDER_FOLDER + dateToFileName(users_date))) {
-            System.out.println("Order File Exists  krish uniq");
-
             loadOrdersForDate(users_date);
 
-            order_number = order_number_map_order.size() + 1;
+            order_number = order_number_map_order.keySet().stream()
+                    .mapToInt(Integer::intValue)
+                    .max()
+                    .orElse(0) + 1;
         }
 
         String customer_name = io.readCustomerName("Enter customer name: ");

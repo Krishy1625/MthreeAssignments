@@ -5,33 +5,32 @@
             http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- Leaf classes: no dependencies -->
     <bean id="productDao" class="flooringmastery.dao.ProductDaoFileImpl" />
     <bean id="taxDao" class="flooringmastery.dao.TaxDaoFileImpl" />
 
-    <!-- UserIO needs the two lookup DAOs -->
     <bean id="io" class="flooringmastery.view.UserIOConsoleImpl">
         <constructor-arg ref="taxDao" />
         <constructor-arg ref="productDao" />
     </bean>
 
-    <!-- View needs io -->
     <bean id="view" class="flooringmastery.view.FlooringMasteryView">
         <constructor-arg ref="io" />
     </bean>
 
-    <!-- OrderDao needs io, productDao, taxDao -->
     <bean id="orderDao" class="flooringmastery.dao.OrderDaoFileImpl">
         <constructor-arg ref="io" />
         <constructor-arg ref="productDao" />
         <constructor-arg ref="taxDao" />
     </bean>
 
-    <!-- Controller needs io, view, orderDao -->
+    <bean id="service" class="flooringmastery.service.FlooringMasteryServiceLayerImpl">
+        <constructor-arg ref="orderDao" />
+    </bean>
+
     <bean id="controller" class="flooringmastery.controller.FlooringMasteryController">
         <constructor-arg ref="io" />
         <constructor-arg ref="view" />
-        <constructor-arg ref="orderDao" />
+        <constructor-arg ref="service" />
     </bean>
 
 </beans>
