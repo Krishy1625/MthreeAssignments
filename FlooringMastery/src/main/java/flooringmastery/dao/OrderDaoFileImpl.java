@@ -6,17 +6,20 @@ import flooringmastery.model.Tax;
 import flooringmastery.view.UserIOConsoleImpl;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class OrderDaoFileImpl implements OrderDao {
 
     public final String DELIMITER = "::";
-    public final String ORDER_FOLDER = "src/main/resources/SampleFileData/Orders/";
+    public static final String ORDER_FOLDER = "src/main/resources/SampleFileData/Orders/";
+    public final String BACKUP_FILE = "src/main/resources/SampleFileData/Backup/DataExport.txt";
     private UserIOConsoleImpl io = new UserIOConsoleImpl();
     private ProductDaoFileImpl productDaoFile = new ProductDaoFileImpl();
     private TaxDaoFileImpl taxDaoFile = new TaxDaoFileImpl();
@@ -122,6 +125,165 @@ public class OrderDaoFileImpl implements OrderDao {
         }
     }
 
+    public void exportAllData(){
+
+        Map<String, Tax> taxes = taxDaoFile.getAllTaxes();
+        Map<String, Product> products = productDaoFile.getAllProducts();
+
+        final String TAX_HEADER = "State,StateName,TaxRate";
+        final String PRODUCTS_HEADER = "ProductType,CostPerSquareFoot,LaborCostPerSquareFoot";
+        final String COMMA = ",";
+
+        try {
+            BufferedWriter fw = new BufferedWriter(new FileWriter(BACKUP_FILE));
+
+            fw.write("*** DISPLAYING TAX INFORMATION ***");
+            fw.newLine();
+            fw.newLine();
+            fw.write(TAX_HEADER);
+            fw.newLine();
+
+            taxes.forEach((key, tax) -> {
+                try {
+                    fw.write(String.valueOf(tax.getStateAbbreviation()) + COMMA +
+                            String.valueOf(tax.getStateName()) + COMMA +
+                            String.valueOf(tax.getTaxRate()));
+                    fw.newLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            fw.newLine();
+            fw.write("*** END OF DISPLAYING TAX INFORMATION ***");
+            fw.newLine();
+            fw.newLine();
+
+            fw.write("*** DISPLAYING PRODUCT INFORMATION ***");
+            fw.newLine();
+            fw.newLine();
+            fw.write(PRODUCTS_HEADER);
+            fw.newLine();
+
+            products.forEach((key, tax) -> {
+                try {
+                    fw.write(String.valueOf(tax.getProductType()) + COMMA +
+                            String.valueOf(tax.getCostPerSquareFoot()) + COMMA +
+                            String.valueOf(tax.getLabourCostPerSquareFoot()));
+                    fw.newLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            fw.newLine();
+            fw.write("*** END OF DISPLAYING PRODUCT INFORMATION ***");
+            fw.newLine();
+
+
+            fw.flush();
+            fw.close();
+        }
+        catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static ArrayList<String> getOrderFileDates() {
+
+        ArrayList<String> orderDates = new ArrayList<>();
+
+        File folder = new File(ORDER_FOLDER);
+
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".txt"));
+
+        if (files != null) {
+            for (File file : files) {
+
+                String fileName = file.getName();
+
+                String middle = fileName.substring(
+                        "Orders_".length(),
+                        fileName.length() - ".txt".length()
+                );
+
+                orderDates.add(middle);
+            }
+        }
+        return orderDates;
+    }
+
+
+
+    public void exportAllOrders(ArrayList<String> orderDates){
+        try{
+            BufferedWriter fw = new BufferedWriter(new FileWriter(BACKUP_FILE, true));
+
+            fw.newLine();
+
+            for(String orderDate: orderDates){
+                fw.write("*** DISPLAYING ORDERS FOR " + stringToDate(orderDate) + " ***");
+                fw.newLine();
+                fw.newLine();
+
+                String file_name = "Orders_" + orderDate + ".txt";
+
+                File order_file = new File(ORDER_FOLDER + file_name);
+
+                if (!order_file.exists()) {
+                    fw.write("No order file found for " + stringToDate(orderDate));
+                    fw.newLine();
+                    fw.newLine();
+                    continue;
+                }
+
+                try(BufferedReader br = new BufferedReader(new FileReader(order_file))){
+
+                    String line;
+
+                    while ((line = br.readLine()) != null) {
+                        fw.write(line);
+                        fw.newLine();
+                    }
+
+                    fw.newLine();
+                    fw.write("*** END OF ORDERS FOR " + stringToDate(orderDate) + " ***");
+                    fw.newLine();
+                    fw.newLine();
+                }
+
+                catch (IOException e){
+                System.out.println(e.getMessage());}
+            }
+
+            fw.flush();
+            fw.close();
+
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public LocalDate stringToDate(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddyyyy");
+
+        try {
+            return LocalDate.parse(date, formatter);
+        } catch (DateTimeParseException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -176,11 +338,11 @@ public class OrderDaoFileImpl implements OrderDao {
 
     public void writeEverythingToFIle(LocalDate date) {
 
-        final String HEARDER = "OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total";
+        final String HEADER = "OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total";
 
         try {
             BufferedWriter fw = new BufferedWriter(new FileWriter(ORDER_FOLDER + dateToFileName(date)));
-            fw.write(HEARDER);
+            fw.write(HEADER);
             fw.newLine();
 
             order_number_map_order.forEach((key, value) -> {
@@ -356,4 +518,14 @@ public class OrderDaoFileImpl implements OrderDao {
         io.print("*** FINISH EDITING ORDER ***");
         return result;
     }
+
+    public static void main(String[] args) {
+        OrderDaoFileImpl orderDaoFile = new OrderDaoFileImpl();
+        orderDaoFile.exportAllData();
+        //orderDaoFile.getOrderFileDates();
+
+        ArrayList<String> order = getOrderFileDates();
+        orderDaoFile.exportAllOrders(order);
+    }
+
 }

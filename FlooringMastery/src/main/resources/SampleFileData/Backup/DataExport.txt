@@ -1,4 +1,115 @@
-OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total,OrderDate
-1,Ada Lovelace,CA,25.00,Tile,249.00,3.50,4.15,871.50,1033.35,476.21,2381.06,06-01-2013
-2,Doctor Who,WA,9.25,Wood,243.00,5.15,4.75,1251.45,1154.25,216.51,2622.21,06-02-2013
-3,Albert Einstein,KY,6.00,Carpet,217.00,2.25,2.10,488.25,455.70,56.64,1000.59,06-02-2013
+*** DISPLAYING TAX INFORMATION ***
+
+State,StateName,TaxRate
+CA,Calfornia,25.00
+TX,Texas,4.45
+WA,Washington,9.25
+KY,Kentucky,6.00
+
+*** END OF DISPLAYING TAX INFORMATION ***
+
+*** DISPLAYING PRODUCT INFORMATION ***
+
+ProductType,CostPerSquareFoot,LaborCostPerSquareFoot
+laminate,1.75,2.10
+carpet,2.25,2.10
+tile,3.50,4.15
+wood,5.15,4.75
+
+*** END OF DISPLAYING PRODUCT INFORMATION ***
+
+*** DISPLAYING ORDERS FOR 2013-06-01 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::Ada Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
+2::YO BOI Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
+
+*** END OF ORDERS FOR 2013-06-01 ***
+
+*** DISPLAYING ORDERS FOR 2013-06-02 ***
+
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+2,Doctor Who,WA,9.25,Wood,243.00,5.15,4.75,1251.45,1154.25,216.51,2622.21
+3,Albert Einstein,KY,6.00,Carpet,217.00,2.25,2.10,488.25,455.70,56.64,1000.59
+
+*** END OF ORDERS FOR 2013-06-02 ***
+
+*** DISPLAYING ORDERS FOR 2006-06-20 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+
+*** END OF ORDERS FOR 2006-06-20 ***
+
+*** DISPLAYING ORDERS FOR 2003-08-18 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+
+*** END OF ORDERS FOR 2003-08-18 ***
+
+*** DISPLAYING ORDERS FOR 2026-09-19 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::Ada Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
+2::YO BOI Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
+
+*** END OF ORDERS FOR 2026-09-19 ***
+
+*** DISPLAYING ORDERS FOR 2026-09-20 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::Ada Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
+2::YO BOI Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
+3::Pikachu::washington::9.25::laminate::200::1.75::2.10::350.00::420.00::71.225000::841.225000
+
+*** END OF ORDERS FOR 2026-09-20 ***
+
+*** DISPLAYING ORDERS FOR 2026-09-21 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::Ada Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
+3::Lucamine::washington::9.25::carpet::100::2.25::2.10::225.00::210.00::40.237500::475.237500
+4::Krish::kentucky::6.00::laminate::100::1.75::2.10::175.00::210.00::23.1000::408.1000
+
+*** END OF ORDERS FOR 2026-09-21 ***
+
+*** DISPLAYING ORDERS FOR 3000-10-10 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::krish::texas::4.45::carpet::100::2.25::2.10::225.00::210.00::19.357500::454.357500
+
+*** END OF ORDERS FOR 3000-10-10 ***
+
+*** DISPLAYING ORDERS FOR 2026-10-18 ***
+
+
+*** END OF ORDERS FOR 2026-10-18 ***
+
+*** DISPLAYING ORDERS FOR 2028-10-20 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::Krishhhhhhy::texas::4.45::wood::100::5.15::4.75::515.00::475.00::44.055000::1034.055000
+
+*** END OF ORDERS FOR 2028-10-20 ***
+
+*** DISPLAYING ORDERS FOR 4000-10-20 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::krish::texas::4.45::tile::100::3.50::4.15::350.00::415.00::34.042500::799.042500
+
+*** END OF ORDERS FOR 4000-10-20 ***
+
+*** DISPLAYING ORDERS FOR 2026-10-25 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::Ada Lovelace::calfornia::25.00::tile::249::3.50::4.15::871.50::1033.35::476.2125::2381.0625
+2::krish::texas::4.45::tile::100::3.50::4.15::350.00::415.00::34.042500::799.042500
+
+*** END OF ORDERS FOR 2026-10-25 ***
+
+*** DISPLAYING ORDERS FOR 2026-10-28 ***
+
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::krisshhhh::texas::4.45::tile::100::3.50::4.15::350.00::415.00::34.042500::799.042500
+
+*** END OF ORDERS FOR 2026-10-28 ***
+
