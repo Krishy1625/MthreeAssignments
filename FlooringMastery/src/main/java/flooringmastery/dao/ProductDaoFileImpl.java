@@ -1,13 +1,11 @@
 package flooringmastery.dao;
 
 import flooringmastery.model.Product;
-import flooringmastery.view.UserIOConsoleImpl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -49,28 +47,9 @@ public class ProductDaoFileImpl implements ProductDao {
         }
     }
 
-    public void listAllProductsAndPricingInformation() {
-        loadFile();
-
-        final String header = "ProductType, CostPerSquareFoot, LaborCostPerSquareFoot";
-        System.out.println("*** Listing product details ***");
-        System.out.println(header);
-
-        for (Map.Entry<String, Product> entry : product_name_map_product_object.entrySet()) {
-            System.out.println(entry.getKey() + ", " + entry.getValue().getCostPerSquareFoot() + ", " + entry.getValue().getLabourCostPerSquareFoot());
-        }
-
-        System.out.println("*** Finished listing product details ***");
-    }
-
-
+    @Override
     public Map<String, Product> getAllProducts() {
         loadFile();
         return product_name_map_product_object;
-    }
-
-    public static void main(String[] args) {
-        ProductDaoFileImpl productDaoFileImpl = new ProductDaoFileImpl();
-        productDaoFileImpl.listAllProductsAndPricingInformation();
     }
 }

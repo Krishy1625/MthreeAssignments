@@ -48,9 +48,4 @@ public class TaxDaoFileImpl implements TaxDao {
         loadFile();
         return state_map_taxes;
     }
-
-    public static void main(String[] args) {
-        TaxDaoFileImpl tx = new TaxDaoFileImpl();
-        tx.loadFile();
-    }
 }
