@@ -35,26 +35,7 @@ public class UserIOConsoleImpl implements UserIO {
     }
 
     @Override
-    public int readInt(String prompt) {
-        print(prompt);
-
-        while(!sc.hasNextInt()) {
-            sc.nextLine();
-            print(prompt);
-        }
-
-        int user_result = sc.nextInt();
-        sc.nextLine();
-        return user_result;
-    }
-
-    @Override
     public int readInt(String prompt, int min, int max) {
-
-        if (max < min) {
-            System.out.println("Maximum value is lower than minimum value");
-            System.exit(-1);
-        }
 
         print(prompt);
 
@@ -122,7 +103,6 @@ public class UserIOConsoleImpl implements UserIO {
         }
     }
 
-
     public BigDecimal calculateMaterialCost(BigDecimal area, BigDecimal costPerSquareFoot) {
         return area.multiply(costPerSquareFoot);
     }
@@ -130,7 +110,6 @@ public class UserIOConsoleImpl implements UserIO {
     public BigDecimal calculateLabourCost(BigDecimal area, BigDecimal LabourCostPerSquareFoot) {
         return area.multiply(LabourCostPerSquareFoot);
     }
-
 
     public String readCustomerNameCanBeEmpty(String prompt, String defaultCustomerName) {
         print(prompt);
