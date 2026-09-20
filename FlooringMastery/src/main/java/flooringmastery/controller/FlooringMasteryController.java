@@ -1,20 +1,23 @@
 package flooringmastery.controller;
 
 import flooringmastery.dao.OrderDaoFileImpl;
-import flooringmastery.model.Order;
 import flooringmastery.view.FlooringMasteryView;
 import flooringmastery.view.UserIO;
-import flooringmastery.view.UserIOConsoleImpl;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+
 
 public class FlooringMasteryController {
 
-    private UserIOConsoleImpl io = new UserIOConsoleImpl();
-    private FlooringMasteryView view = new FlooringMasteryView();
-    private OrderDaoFileImpl orderDao = new OrderDaoFileImpl();
+    private UserIO io;
+    private FlooringMasteryView view;
+    private OrderDaoFileImpl orderDao;
+
+    public FlooringMasteryController(UserIO io, FlooringMasteryView view, OrderDaoFileImpl orderDao) {
+        this.io = io;
+        this.view = view;
+        this.orderDao = orderDao;
+    }
 
     public void run(){
 
@@ -79,10 +82,5 @@ public class FlooringMasteryController {
         io.print("*** Export All Data ***");
         orderDao.exportAllDataFinal();
         io.print("*** DATA EXPORTED TO 'DataExport.txt' UNDER THE 'Backup' FOLDER ***");
-    }
-
-    public static void main(String[] args) {
-        FlooringMasteryController fmc = new FlooringMasteryController();
-        fmc.run();
     }
 }

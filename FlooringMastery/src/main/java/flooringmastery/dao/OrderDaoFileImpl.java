@@ -3,7 +3,7 @@ package flooringmastery.dao;
 import flooringmastery.model.Order;
 import flooringmastery.model.Product;
 import flooringmastery.model.Tax;
-import flooringmastery.view.UserIOConsoleImpl;
+import flooringmastery.view.UserIO;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -19,10 +19,18 @@ public class OrderDaoFileImpl implements OrderDao {
     public final String DELIMITER = "::";
     public static final String ORDER_FOLDER = "src/main/resources/SampleFileData/Orders/";
     public final String BACKUP_FILE = "src/main/resources/SampleFileData/Backup/DataExport.txt";
-    private UserIOConsoleImpl io = new UserIOConsoleImpl();
-    private ProductDaoFileImpl productDaoFile = new ProductDaoFileImpl();
-    private TaxDaoFileImpl taxDaoFile = new TaxDaoFileImpl();
+
+    private UserIO io;
+    private ProductDao productDaoFile;
+    private TaxDao taxDaoFile;
+
     public Map<Integer, Order> order_number_map_order = new HashMap<>();
+
+    public OrderDaoFileImpl(UserIO io, ProductDao productDaoFile, TaxDao taxDaoFile) {
+        this.io = io;
+        this.productDaoFile = productDaoFile;
+        this.taxDaoFile = taxDaoFile;
+    }
 
 
     // Main Methods

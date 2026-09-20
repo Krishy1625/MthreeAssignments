@@ -1,8 +1,7 @@
 package flooringmastery.view;
 
-import flooringmastery.dao.ProductDaoFileImpl;
+import flooringmastery.dao.ProductDao;
 import flooringmastery.dao.TaxDao;
-import flooringmastery.dao.TaxDaoFileImpl;
 import flooringmastery.model.Product;
 import flooringmastery.model.Tax;
 
@@ -15,9 +14,14 @@ import java.util.Scanner;
 
 public class UserIOConsoleImpl implements UserIO {
 
-    TaxDaoFileImpl taxDao = new TaxDaoFileImpl();
-    ProductDaoFileImpl productDaoFile = new ProductDaoFileImpl();
+    private TaxDao taxDao;
+    private ProductDao productDaoFile;
     private final Scanner sc = new Scanner(System.in);
+
+    public UserIOConsoleImpl(TaxDao taxDao, ProductDao productDaoFile) {
+        this.taxDao = taxDao;
+        this.productDaoFile = productDaoFile;
+    }
 
     @Override
     public void print(String message) {
@@ -351,22 +355,5 @@ public class UserIOConsoleImpl implements UserIO {
     public BigDecimal calculateTotal(BigDecimal materialCost, BigDecimal labourCost, BigDecimal tax) {
         return materialCost.add(labourCost).add(tax);
     }
-
-
-    public static void main(String[] args) {
-        UserIOConsoleImpl userIOConsoleImpl = new UserIOConsoleImpl();
-        //userIOConsoleImpl.readString("Hi");
-        //userIOConsoleImpl.readInt("How are you?", 10, 3);
-        //userIOConsoleImpl.readDate("Enter a date in the (dd-mm-yyyy) format: ");
-        //userIOConsoleImpl.readUserState("Enter a state: ");
-        //userIOConsoleImpl.readArea("Enter a area: ");
-        //userIOConsoleImpl.readUserProductType("Enter a product: ");
-        //userIOConsoleImpl.readCustomerName("Enter Customer Name");
-         BigDecimal ans = userIOConsoleImpl.calculateTax(new BigDecimal(2134.5435), new BigDecimal(1234.213), new BigDecimal(1235423.5432));
-
-        System.out.println(ans);
-    }
-
-
 }
 

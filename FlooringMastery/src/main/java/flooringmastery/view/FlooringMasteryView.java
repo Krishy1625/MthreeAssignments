@@ -1,7 +1,12 @@
 package flooringmastery.view;
 
 public class FlooringMasteryView {
-    private UserIO io = new UserIOConsoleImpl();
+
+    private UserIO io;
+
+    public FlooringMasteryView(UserIO io) {
+        this.io = io;
+    }
 
     public int displayMainMenuAndGetSelection(){
 
