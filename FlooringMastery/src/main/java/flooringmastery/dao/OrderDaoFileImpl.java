@@ -37,7 +37,7 @@ public class OrderDaoFileImpl implements OrderDao {
         return Files.exists(Paths.get(file_path));
     }
 
-    public LocalDate stringToDate(String date) {
+    public static LocalDate stringToDate(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         try {
@@ -200,58 +200,6 @@ public class OrderDaoFileImpl implements OrderDao {
         return order;
     }
 
-    public List<Order> getOrdersForDate() {
-
-        io.print("Display Orders Selected");
-        LocalDate date_of_order =  io.readDate("What data would you like to display orders for? (dd-mm-yyyy)");
-        String format_date = date_of_order.format(DateTimeFormatter.ofPattern("MMddyyyy"));
-
-        final String file_template = "Orders_";
-        final String file_format = ".txt";
-
-        String file_name = file_template + format_date + file_format;
-
-        File file = new File(ORDER_FOLDER + file_name);
-
-        try(Scanner sc = new Scanner(file)){
-
-            if(sc.hasNextLine()){
-                sc.nextLine(); // get rid of the headers
-            }
-
-            while (sc.hasNextLine()) {
-
-                String[] order_split =  sc.nextLine().trim().split(DELIMITER);
-                Order order = createOrder(order_split);
-
-                order_number_map_order.put(Integer.valueOf(order_split[0]),order);
-            }
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("Product file not found: " + file);
-        }
-
-        return new ArrayList<>(order_number_map_order.values());
-        //remember array lists start from 0 but orders are from 1 onward
-    }
-
-    public void prettyPrint(Order order) {
-        io.print(
-                order.getOrderNumber() + DELIMITER +
-                order.getCustomerName() + DELIMITER +
-                order.getState() + DELIMITER +
-                order.getTaxRate() + DELIMITER +
-                order.getProductType() + DELIMITER +
-                order.getArea() + DELIMITER +
-                order.getCostPerSquareFoot() + DELIMITER +
-                order.getLabourCostPerSquareFoot() + DELIMITER +
-                order.getMaterialCost() + DELIMITER +
-                order.getLabourCost() + DELIMITER +
-                order.getTax() + DELIMITER +
-                order.getTotal()
-                );
-    }
-
     public void detailedPrint(Order order) {
         io.print("Order Number: " + order.getOrderNumber());
         io.print("Customer Name: " + order.getCustomerName());
@@ -283,6 +231,8 @@ public class OrderDaoFileImpl implements OrderDao {
 
             if (!order_number_map_order.isEmpty()) {
                 String prompt = "There are " + order_number_map_order.size() + " orders for this date. Which order do you want to edit? ";
+                displayOrdersForDate(date);
+                System.out.println();
                 int user_order_number = io.readInt(prompt, 1, order_number_map_order.size());
 
                 Order order_to_edit = order_number_map_order.get(user_order_number);
@@ -351,12 +301,102 @@ public class OrderDaoFileImpl implements OrderDao {
         }
     }
 
+    public void removeAnOrder(LocalDate date) {
+
+        io.print("*** REMOVING ORDER ***");
+
+        boolean exists = checkFileExists(ORDER_FOLDER + dateToFileName(date));
+
+        if (!exists) {
+            System.out.println("No such file exists currently for this date.");
+        }
+        else {
+
+            loadOrdersForDate(date);
+
+            if(!order_number_map_order.isEmpty()) {
+                String prompt = "There are " + order_number_map_order.size() + " orders for this date. Which order do you want to delete? ";
+
+                displayOrdersForDate(date);
+
+                int user_order_number = io.readInt(prompt, 1, order_number_map_order.size());
+
+                io.print("*** SUMMARY OF ORDER TO REMOVE ***");
+                detailedPrint(order_number_map_order.get(user_order_number));
+                io.print("*** END OF ORDER SUMMARY TO REMOVE ***");
+
+                if(confirmOrderToDelete()){
+                    order_number_map_order.remove(user_order_number);
+                    writeEverythingToFIle(date);
+                    io.print("*** ORDER SUCCESSFULLY REMOVED ***");
+                }
+            }
+        }
+    }
+
+    public boolean confirmOrderToDelete() {
+        String confimation = io.readString("Enter Yes or No to confirm DELETING this order, (Default is NO): ").strip().toLowerCase();
+        return confimation.equals("yes");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void displayOrdersForDate(LocalDate date){
+
+        System.out.println();
+        io.print("*** DISPLAYING ORDERS ***");
+        System.out.println();
+
+        final String comma = ", ";
+
+        if (!order_number_map_order.isEmpty()) {
+            order_number_map_order.clear();
+        }
+
+        loadOrdersForDate(date);
+
+        order_number_map_order.forEach((order_number, order) -> {
+            io.print("Order #" + order.getOrderNumber());
+            io.print(
+                    order.getCustomerName() + comma
+                            + order.getState()  + comma
+                            + order.getTaxRate()  + comma
+                            + order.getProductType()   + comma
+                            + order.getArea()  + comma
+                            + order.getCostPerSquareFoot()  + comma
+                            + order.getLabourCostPerSquareFoot()  + comma
+                            + order.getMaterialCost()    + comma
+                            + order.getLabourCost()     + comma
+                            + order.getTax()   + comma
+                            + order.getTotal());
+        });
+        System.out.println();
+        io.print("*** FINISH DISPLAYING ORDERS ***");
+        System.out.println();
+    }
+
+
+
+
 
     public static void main(String[] args) {
         OrderDaoFileImpl orderDaoFileImpl = new OrderDaoFileImpl();
         //orderDaoFileImpl.writeToFIle(LocalDate.now());
         //.addOrder();
-        orderDaoFileImpl.editedOrderFinal();
+        //orderDaoFileImpl.editedOrderFinal();
         //orderDaoFileImpl.test("empty");
+        orderDaoFileImpl.displayOrdersForDate(stringToDate("20-10-4000"));
     }
 }

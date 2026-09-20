@@ -36,7 +36,7 @@ public class FlooringMasteryController {
                     editOrder();
                     break;
                 case 4:
-                    io.print("Remove an Order");
+                    removeOrder();
                     break;
                 case 5:
                     io.print("Export All Data");
@@ -52,26 +52,9 @@ public class FlooringMasteryController {
     }
 
     public void displayOrders(){
-
-        final String comma = ", ";
-        ArrayList<Order> list_of_orders = (ArrayList<Order>) orderDao.getOrdersForDate();
-        for (int i = 0; i < list_of_orders.size(); i++){
-
-            io.print("Order #" + (i + 1) + ": ");
-            Order order = list_of_orders.get(i);
-            io.print(
-                    order.getCustomerName() + comma
-                    + order.getState()  + comma
-                    + order.getTaxRate()  + comma
-                    + order.getProductType()   + comma
-                    + order.getArea()  + comma
-                    + order.getCostPerSquareFoot()  + comma
-                    + order.getLabourCostPerSquareFoot()  + comma
-                    + order.getMaterialCost()    + comma
-                    + order.getLabourCost()     + comma
-                    + order.getTax()   + comma
-                    + order.getTotal());
-        }
+        io.print("*** DISPLAYING ORDERS ***");
+        LocalDate user_date = io.readDate("What date do you want to display orders for?");
+        orderDao.displayOrdersForDate(user_date);
     }
 
     public void addOrder(){
@@ -84,6 +67,12 @@ public class FlooringMasteryController {
         io.print("*** Edit Order ***");
         LocalDate userdate = io.readDate("Enter order date to be edited: ");
         orderDao.editedOrderFinal(userdate);
+    }
+
+    public void removeOrder(){
+        io.print("*** Remove Order ***");
+        LocalDate user_date = io.readDate("Enter order date to be removed: ");
+        orderDao.removeAnOrder(user_date);
     }
 
     public static void main(String[] args) {
