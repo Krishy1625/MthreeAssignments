@@ -1,5 +1,7 @@
 package flooringmastery.controller;
 
+import flooringmastery.exception.FlooringMasteryDataValidationException;
+import flooringmastery.exception.FlooringMasteryPersistenceException;
 import flooringmastery.model.Order;
 import flooringmastery.service.FlooringMasteryServiceLayer;
 import flooringmastery.view.FlooringMasteryView;
@@ -18,40 +20,42 @@ public class FlooringMasteryController {
     }
 
     public void run() {
-
         boolean keepRunning = true;
-
         while (keepRunning) {
-
             int selection = view.displayMainMenuAndGetSelection();
-
-            switch (selection) {
-                case 1:
-                    displayOrders();
-                    break;
-                case 2:
-                    addOrder();
-                    break;
-                case 3:
-                    editOrder();
-                    break;
-                case 4:
-                    removeOrder();
-                    break;
-                case 5:
-                    exportAllData();
-                    break;
-                case 6:
-                    keepRunning = false;
-                    break;
-                default:
-                    view.unknownCommand();
+            try {
+                switch (selection) {
+                    case 1:
+                        displayOrders();
+                        break;
+                    case 2:
+                        addOrder();
+                        break;
+                    case 3:
+                        editOrder();
+                        break;
+                    case 4:
+                        removeOrder();
+                        break;
+                    case 5:
+                        exportAllData();
+                        break;
+                    case 6:
+                        keepRunning = false;
+                        break;
+                    default:
+                        view.unknownCommand();
+                }
+            } catch (FlooringMasteryPersistenceException e) {
+                view.displayError("There was a problem reading or writing data: " + e.getMessage());
+            } catch (FlooringMasteryDataValidationException e) {
+                view.displayError(e.getMessage());
             }
         }
         view.exitMessage();
     }
 
-    public void displayOrders() {
+    public void displayOrders() throws FlooringMasteryPersistenceException{
         LocalDate date = view.getOrderDate();
         List<Order> orders = service.getOrdersForDate(date);
         if (orders.isEmpty()) {
@@ -61,7 +65,7 @@ public class FlooringMasteryController {
         }
     }
 
-    public void addOrder() {
+    public void addOrder() throws FlooringMasteryPersistenceException, FlooringMasteryDataValidationException{
         LocalDate date = view.getFutureOrderDate();
 
         Order order = view.getNewOrderInfo();
@@ -79,7 +83,7 @@ public class FlooringMasteryController {
         }
     }
 
-    public void editOrder() {
+    public void editOrder() throws FlooringMasteryPersistenceException, FlooringMasteryDataValidationException{
         LocalDate date = view.getOrderDate();
 
         List<Order> orders = service.getOrdersForDate(date);
@@ -110,7 +114,7 @@ public class FlooringMasteryController {
         }
     }
 
-    public void removeOrder() {
+    public void removeOrder() throws FlooringMasteryPersistenceException{
         LocalDate date = view.getOrderDate();
 
         List<Order> orders = service.getOrdersForDate(date);
@@ -139,7 +143,7 @@ public class FlooringMasteryController {
         }
     }
 
-    public void exportAllData() {
+    public void exportAllData() throws FlooringMasteryPersistenceException {
         service.exportAllData();
         view.displayExportSuccess();
     }

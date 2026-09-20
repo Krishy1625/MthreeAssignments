@@ -3,6 +3,8 @@ package flooringmastery.service;
 import flooringmastery.dao.OrderDao;
 import flooringmastery.dao.ProductDao;
 import flooringmastery.dao.TaxDao;
+import flooringmastery.exception.FlooringMasteryDataValidationException;
+import flooringmastery.exception.FlooringMasteryPersistenceException;
 import flooringmastery.model.Order;
 import flooringmastery.model.Product;
 import flooringmastery.model.Tax;
@@ -28,17 +30,17 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     }
 
     @Override
-    public List<Order> getOrdersForDate(LocalDate date) {
+    public List<Order> getOrdersForDate(LocalDate date) throws FlooringMasteryPersistenceException {
         return orderDao.getOrders(date);
     }
 
     @Override
-    public Order getOrderForDate(LocalDate date, int orderNumber) {
+    public Order getOrderForDate(LocalDate date, int orderNumber) throws FlooringMasteryPersistenceException{
         return orderDao.getOrder(date, orderNumber);
     }
 
     @Override
-    public int getNextOrderNumber(LocalDate date) {
+    public int getNextOrderNumber(LocalDate date) throws FlooringMasteryPersistenceException{
         return orderDao.getOrders(date).stream()
                 .mapToInt(Order::getOrderNumber)
                 .max()
@@ -46,12 +48,20 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     }
 
     @Override
-    public Order calculateOrder(Order order) {
+    public Order calculateOrder(Order order) throws FlooringMasteryDataValidationException {
+
         Map<String, Tax> taxes_map = taxDaoFile.getAllTaxes();
         Map<String, Product> product_map = productDaoFile.getAllProducts();
 
         Tax tax = taxes_map.get(order.getState().toLowerCase());
         Product product = product_map.get(order.getProductType().toLowerCase());
+
+        if (tax == null) {
+            throw new FlooringMasteryDataValidationException("We cannot sell in state '" + order.getState() + "'.");
+        }
+        if (product == null) {
+            throw new FlooringMasteryDataValidationException("'" + order.getProductType() + "' is not an available product.");
+        }
 
         order.setTaxRate(tax.getTaxRate());
         order.setCostPerSquareFoot(product.getCostPerSquareFoot());
@@ -59,8 +69,7 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
 
         BigDecimal material_cost = order.getArea().multiply(order.getCostPerSquareFoot());
         BigDecimal labour_cost = order.getArea().multiply(order.getLabourCostPerSquareFoot());
-        final String HUNDRED = "100";
-        BigDecimal calculated_tax = material_cost.add(labour_cost).multiply(order.getTaxRate().divide(new BigDecimal(HUNDRED)));
+        BigDecimal calculated_tax = material_cost.add(labour_cost).multiply(order.getTaxRate().divide(new BigDecimal("100")));
         BigDecimal total = material_cost.add(labour_cost).add(calculated_tax);
 
         order.setMaterialCost(material_cost);
@@ -72,17 +81,17 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     }
 
     @Override
-    public void saveOrder(LocalDate date, Order order) {
+    public void saveOrder(LocalDate date, Order order)  throws FlooringMasteryPersistenceException{
         orderDao.saveOrder(date, order);
     }
 
     @Override
-    public void deleteOrder(LocalDate date, int orderNumber) {
+    public void deleteOrder(LocalDate date, int orderNumber)  throws FlooringMasteryPersistenceException{
         orderDao.deleteOrder(date, orderNumber);
     }
 
     @Override
-    public void exportAllData() {
+    public void exportAllData()  throws FlooringMasteryPersistenceException{
         orderDao.exportAllData();
     }
 }

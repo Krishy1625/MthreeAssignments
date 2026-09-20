@@ -1,12 +1,12 @@
 package flooringmastery.dao;
 
+import flooringmastery.exception.FlooringMasteryPersistenceException;
 import flooringmastery.model.Order;
 import flooringmastery.model.Product;
 import flooringmastery.model.Tax;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -30,33 +30,33 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> getOrders(LocalDate date) {
+    public List<Order> getOrders(LocalDate date) throws FlooringMasteryPersistenceException {
         loadOrdersForDate(date);
         return new ArrayList<>(order_number_map_order.values());
     }
 
     @Override
-    public Order getOrder(LocalDate date, int orderNumber) {
+    public Order getOrder(LocalDate date, int orderNumber) throws FlooringMasteryPersistenceException{
         loadOrdersForDate(date);
         return order_number_map_order.get(orderNumber);
     }
 
     @Override
-    public void saveOrder(LocalDate date, Order order) {
+    public void saveOrder(LocalDate date, Order order) throws FlooringMasteryPersistenceException {
         loadOrdersForDate(date);
         order_number_map_order.put(order.getOrderNumber(), order);
         writeEverythingToFIle(date);
     }
 
     @Override
-    public void deleteOrder(LocalDate date, int orderNumber) {
+    public void deleteOrder(LocalDate date, int orderNumber) throws FlooringMasteryPersistenceException{
         loadOrdersForDate(date);
         order_number_map_order.remove(orderNumber);
         writeEverythingToFIle(date);
     }
 
     @Override
-    public void exportAllData() {
+    public void exportAllData() throws FlooringMasteryPersistenceException {
         Map<String, Tax> taxes = taxDaoFile.getAllTaxes();
         Map<String, Product> products = productDaoFile.getAllProducts();
         ArrayList<String> orderDates = getOrderFileDates();
@@ -123,7 +123,7 @@ public class OrderDaoFileImpl implements OrderDao {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new FlooringMasteryPersistenceException("Could not write export file: " + BACKUP_FILE, e);
         }
     }
 
@@ -158,7 +158,7 @@ public class OrderDaoFileImpl implements OrderDao {
         return "Orders_" + formatted_date + ".txt";
     }
 
-    public void loadOrdersForDate(LocalDate date) {
+    public void loadOrdersForDate(LocalDate date) throws FlooringMasteryPersistenceException {
         order_number_map_order.clear();
         File file = new File(ORDER_FOLDER + dateToFileName(date));
 
@@ -166,16 +166,21 @@ public class OrderDaoFileImpl implements OrderDao {
             Files.lines(file.toPath())
                     .skip(1)
                     .map(String::trim)
-                    .map((line) -> line.split(DELIMITER))
-                    .map(OrderDaoFileImpl::createOrder)
-                    .forEach((order) ->
-                            order_number_map_order.put(order.getOrderNumber(), order));
+                    .forEach((line) -> {
+                        try {
+                            String[] split = line.split(DELIMITER);
+                            Order order = createOrder(split);
+                            order_number_map_order.put(order.getOrderNumber(), order);
+                        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                            System.out.println("Skipping malformed order line: " + line);
+                        }
+                    });
         } catch (IOException e) {
-            // file doesn't exist so the map stays empty
+            // file doesn't exist — map stays empty, not an error
         }
     }
 
-    public void writeEverythingToFIle(LocalDate date) {
+    public void writeEverythingToFIle(LocalDate date) throws FlooringMasteryPersistenceException {
         final String HEADER = "OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total";
 
         try {
@@ -206,7 +211,7 @@ public class OrderDaoFileImpl implements OrderDao {
             fw.flush();
             fw.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new FlooringMasteryPersistenceException("Could not write order file for: " + date, e);
         }
     }
 
