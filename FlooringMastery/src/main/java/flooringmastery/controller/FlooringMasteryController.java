@@ -33,7 +33,7 @@ public class FlooringMasteryController {
                     addOrder();
                     break;
                 case 3:
-                    io.print("Edit an Order");
+                    editOrder();
                     break;
                 case 4:
                     io.print("Remove an Order");
@@ -78,7 +78,12 @@ public class FlooringMasteryController {
         io.print("*** Add Order ***");
         LocalDate users_date = io.readDateAfterToday("Enter order date (must be in the future in the dd-mm-yyyy format): ");
         orderDao.addAnOrder(users_date);
+    }
 
+    public void editOrder(){
+        io.print("*** Edit Order ***");
+        LocalDate userdate = io.readDate("Enter order date to be edited: ");
+        orderDao.editedOrderFinal(userdate);
     }
 
     public static void main(String[] args) {

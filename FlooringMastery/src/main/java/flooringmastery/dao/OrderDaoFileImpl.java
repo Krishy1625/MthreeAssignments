@@ -106,7 +106,7 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     public boolean confirmOrder() {
-        String confimation = io.readString("Enter Yes or No to confirm adding this order, (Default is NO): ").strip().toLowerCase();
+        String confimation = io.readString("Enter Yes or No to confirm ADDING this order, (Default is NO): ").strip().toLowerCase();
         return confimation.equals("yes");
     }
 
@@ -267,9 +267,11 @@ public class OrderDaoFileImpl implements OrderDao {
         io.print("Total: " + order.getTotal());
     }
 
-    public void editAnOrder(LocalDate date) {
+    public boolean editAnOrder(LocalDate date) {
 
         io.print("*** EDITING ORDER ***");
+
+        boolean result = false;
 
         boolean exists = checkFileExists(ORDER_FOLDER + dateToFileName(date));
 
@@ -313,23 +315,48 @@ public class OrderDaoFileImpl implements OrderDao {
                 modified_order.setTax(calculated_tax);
                 modified_order.setTotal(total);
 
-                order_number_map_order.put(modified_order.getOrderNumber(), modified_order);
-
+                System.out.println("*** SUMMARY OF EDITED ORDER ***");
                 detailedPrint(modified_order);
-                prettyPrint(modified_order);
-                System.out.println(order_number_map_order);
+                System.out.println("*** END OF SUMMARY OF EDITED ORDER ***");
+
+                if (confirmEditOrder()) {
+                    order_number_map_order.put(modified_order.getOrderNumber(), modified_order);
+                    result = true;
+                }
             }
             else{
                 System.out.println("No orders exists for this date.");
             }
         }
         io.print("*** FINISH EDITING ORDER ***");
+        return result;
     }
+
+    public boolean confirmEditOrder() {
+        String confimation = io.readString("Enter Yes or No to confirm EDITING this order, (Default is NO): ").strip().toLowerCase();
+        return confimation.equals("yes");
+    }
+
+    public void editedOrderFinal(LocalDate user_date){
+
+        if (!order_number_map_order.isEmpty()) {
+            order_number_map_order.clear();
+        }
+
+        if(editAnOrder(user_date)) {
+            writeEverythingToFIle(user_date);
+        }
+        else{
+            System.out.println("NO orders were edited for this date.");
+        }
+    }
+
 
     public static void main(String[] args) {
         OrderDaoFileImpl orderDaoFileImpl = new OrderDaoFileImpl();
         //orderDaoFileImpl.writeToFIle(LocalDate.now());
         //.addOrder();
-        orderDaoFileImpl.editAnOrder(LocalDate.now());
+        orderDaoFileImpl.editedOrderFinal();
+        //orderDaoFileImpl.test("empty");
     }
 }

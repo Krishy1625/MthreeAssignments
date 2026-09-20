@@ -1,4 +1,4 @@
 OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
 1::Ada Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
 2::YO BOI Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06
-3::pikachu::texas::4.45::tile::1000::3.50::4.15::3500.00::4150.00::340.425000::7990.425000
+3::Pikachu::washington::9.25::laminate::200::1.75::2.10::350.00::420.00::71.225000::841.225000

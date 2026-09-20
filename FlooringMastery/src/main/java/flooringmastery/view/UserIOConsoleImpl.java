@@ -317,8 +317,12 @@ public class UserIOConsoleImpl implements UserIO {
         while(true) {
             String user_input = sc.nextLine().strip().toLowerCase();
 
-            if (tax_map.containsKey(user_input)) {
+            if (user_input.isEmpty()) {
                 return default_state;
+            }
+
+            if (tax_map.containsKey(user_input)) {
+                return user_input;
             }
             else{
                 print("We cannot find any tax for this state or we cannot sell there.");
