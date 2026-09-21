@@ -67,17 +67,21 @@ public class UserIOConsoleImpl implements UserIO {
                     sc.nextLine();
                     print(prompt);
                 }
+
             }
             else {
                 sc.nextLine();
                 print(prompt);
             }
+
         }
     }
 
     public LocalDate readDate(String prompt) {
+
         print(prompt);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
         while(true) {
             String user_input_date = sc.nextLine();
 
@@ -89,7 +93,9 @@ public class UserIOConsoleImpl implements UserIO {
                 System.out.println();
                 print(prompt);
             }
+
         }
+
     }
 
 
@@ -114,7 +120,9 @@ public class UserIOConsoleImpl implements UserIO {
                 System.out.println();
                 print(prompt);
             }
+
         }
+
     }
 
     public String readCustomerNameCanBeEmpty(String prompt, String defaultCustomerName) {
@@ -128,6 +136,7 @@ public class UserIOConsoleImpl implements UserIO {
             if (user_input.isEmpty()) {
                 return defaultCustomerName;
             }
+
             if (!user_input.matches(regex)) {
                 print("Error: Customer name can only consist of");
                 print("alphanumeric characters, periods and commas.");
@@ -135,7 +144,9 @@ public class UserIOConsoleImpl implements UserIO {
             else{
                 return user_input;
             }
+
         }
+
     }
 
     public String readCustomerName(String prompt) {
@@ -149,6 +160,7 @@ public class UserIOConsoleImpl implements UserIO {
             if (user_input.isEmpty()) {
                 print("Error: Customer name cannot be empty.");
             }
+
             if (!user_input.matches(regex)) {
                 print("Error: Customer name can only consist of");
                 print("alphanumeric characters, periods and commas.");
@@ -156,7 +168,9 @@ public class UserIOConsoleImpl implements UserIO {
             else{
                 return user_input;
             }
+
         }
+
     }
 
     public BigDecimal readArea(String prompt) {
@@ -165,9 +179,7 @@ public class UserIOConsoleImpl implements UserIO {
         while(true) {
             String user_input = sc.nextLine().strip();
 
-            final String hundred = "100";
-
-            final BigDecimal hundred_big_decimal = new BigDecimal(hundred);
+            final BigDecimal hundred_big_decimal = new BigDecimal("100");
 
             try{
                 BigDecimal area = new BigDecimal(user_input);
@@ -178,12 +190,14 @@ public class UserIOConsoleImpl implements UserIO {
                 else {
                     print("Error: Minimum order size is " + hundred_big_decimal + "sq ft");
                 }
+
             }
             catch (NumberFormatException e) {
                 System.out.println("Error: Area is below zero or Number cannot be converted to BigDecimal");
             }
 
         }
+
     }
 
 
@@ -197,9 +211,7 @@ public class UserIOConsoleImpl implements UserIO {
                 return defaultArea;
             }
 
-            final String hundred = "100";
-
-            final BigDecimal hundred_big_decimal = new BigDecimal(hundred);
+            final BigDecimal hundred_big_decimal = new BigDecimal("100");
 
             try{
                 BigDecimal area = new BigDecimal(user_input);
@@ -210,12 +222,14 @@ public class UserIOConsoleImpl implements UserIO {
                 else {
                     print("Error: Minimum order size is " + hundred_big_decimal + "sq ft");
                 }
+
             }
             catch (NumberFormatException e) {
                 System.out.println("Error: Area is below zero or Number cannot be converted to BigDecimal");
             }
 
         }
+
     }
 
 
@@ -236,7 +250,9 @@ public class UserIOConsoleImpl implements UserIO {
                 print("Error: Product type not found.");
                 listAllProductsAndPricingInformation();
             }
+
         }
+
     }
 
     public String readUserProductTypeCanBeEmpty(String prompt, String defaultProductType) {
@@ -260,17 +276,19 @@ public class UserIOConsoleImpl implements UserIO {
                 print("Error: Product type not found.");
                 listAllProductsAndPricingInformation();
             }
+
         }
+
     }
 
     public void listAllProductsAndPricingInformation() {
         Map<String, Product> product = productDaoFile.getAllProducts();
 
-        final String header = "ProductType, CostPerSquareFoot, LaborCostPerSquareFoot";
+        final String HEADER = "ProductType, CostPerSquareFoot, LaborCostPerSquareFoot";
         System.out.println();
         System.out.println("*** Listing product details ***");
         System.out.println();
-        System.out.println(header);
+        System.out.println(HEADER);
 
         for (Map.Entry<String, Product> entry : product.entrySet()) {
             System.out.println(entry.getKey() + ", " + entry.getValue().getCostPerSquareFoot() + ", " + entry.getValue().getLabourCostPerSquareFoot());
@@ -286,6 +304,11 @@ public class UserIOConsoleImpl implements UserIO {
 
         print(prompt);
 
+        print("The only valid states are: ");
+        for(Map.Entry<String, Tax> entry : tax_map.entrySet()) {
+            System.out.println(entry.getKey());
+        }
+
         while(true) {
             String user_input = sc.nextLine().strip().toLowerCase();
 
@@ -299,7 +322,9 @@ public class UserIOConsoleImpl implements UserIO {
                     System.out.println(entry.getKey());
                 }
             }
+
         }
+
     }
 
     public String readUserStateCanBeEmpty(String prompt, String default_state) {
@@ -317,6 +342,7 @@ public class UserIOConsoleImpl implements UserIO {
             if (tax_map.containsKey(user_input)) {
                 return user_input;
             }
+
             else{
                 print("We cannot find any tax for this state or we cannot sell there.");
                 print("The only valid states are: ");
@@ -324,7 +350,9 @@ public class UserIOConsoleImpl implements UserIO {
                     System.out.println(entry.getKey());
                 }
             }
+
         }
+
     }
 }
 

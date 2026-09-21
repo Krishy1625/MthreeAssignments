@@ -14,7 +14,7 @@ public class ProductDaoFileImpl implements ProductDao {
     private static final String PRODUCT_FILE= "src/main/resources/SampleFileData/Data/Products.txt";
     private static final String DELIMITER = ",";
 
-    Map<String, Product> product_name_map_product_object = new HashMap<>();
+    Map<String, Product> productNameMapProductObject = new HashMap<>();
 
     @Override
     public void loadFile() {
@@ -39,7 +39,7 @@ public class ProductDaoFileImpl implements ProductDao {
                 BigDecimal labour_cost_per_square_foot = new BigDecimal(product_split[2]);
                 product.setLabourCostPerSquareFoot(labour_cost_per_square_foot);
 
-                product_name_map_product_object.put(product_split[0].toLowerCase(), product);
+                productNameMapProductObject.put(product_split[0].toLowerCase(), product);
             }
         }
         catch (FileNotFoundException e) {
@@ -50,6 +50,6 @@ public class ProductDaoFileImpl implements ProductDao {
     @Override
     public Map<String, Product> getAllProducts() {
         loadFile();
-        return product_name_map_product_object;
+        return productNameMapProductObject;
     }
 }

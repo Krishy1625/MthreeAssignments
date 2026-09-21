@@ -61,17 +61,5 @@ public class Order {
     public void setTax(String tax){this.tax = new BigDecimal(tax);}
     public void setOrderNumber(String orderNumber){this.orderNumber = Integer.parseInt(orderNumber);}
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return orderNumber == order.orderNumber && Objects.equals(customerName, order.customerName) && Objects.equals(state, order.state) && Objects.equals(orderDate, order.orderDate) && Objects.equals(taxRate, order.taxRate) && Objects.equals(productType, order.productType) && Objects.equals(costPerSquareFoot, order.costPerSquareFoot) && Objects.equals(labourCostPerSquareFoot, order.labourCostPerSquareFoot) && Objects.equals(materialCost, order.materialCost) && Objects.equals(area, order.area) && Objects.equals(labourCost, order.labourCost) && Objects.equals(tax, order.tax) && Objects.equals(total, order.total);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(orderNumber, customerName, state, orderDate, taxRate, productType, costPerSquareFoot, labourCostPerSquareFoot, materialCost, area, labourCost, tax, total);
-    }
 }
 
