@@ -24,10 +24,11 @@ public class FlooringMasteryView {
         io.print("* 3. Edit an Order");
         io.print("* 4. Remove an Order");
         io.print("* 5. Export All Data");
-        io.print("* 6. Quit");
+        io.print("* 6. Export Data to Backup");
+        io.print("* 7. Quit");
         io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
         io.print("");
-        return io.readInt("Please select from the above choices.", 1, 6);
+        return io.readInt("Please select from the above choices.", 1, 7);
     }
 
     public void exitMessage() { io.print("Cya later, BYE!"); }
@@ -126,5 +127,9 @@ public class FlooringMasteryView {
 
     public void displayExportSuccess() {
         io.print("*** DATA EXPORTED TO 'DataExport.txt' UNDER THE 'Backup' FOLDER ***");
+    }
+
+    public void displayExportWithDatesSuccess() {
+        io.print("*** DATA EXPORTED TO 'DataExport.txt' UNDER THE 'Backup' FOLDER (WITH DATES) ***");
     }
 }

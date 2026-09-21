@@ -1,0 +1,2 @@
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+1::krish::texas::4.45::tile::200::3.50::4.15::700.00::830.00::68.085000::1598.085000

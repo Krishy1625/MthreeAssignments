@@ -12,4 +12,5 @@ public interface OrderDao {
     void saveOrder(LocalDate date, Order order) throws FlooringMasteryPersistenceException;
     void deleteOrder(LocalDate date, int orderNumber) throws FlooringMasteryPersistenceException;
     void exportAllData() throws FlooringMasteryPersistenceException;
+    void exportDataWithDates() throws FlooringMasteryPersistenceException;
 }

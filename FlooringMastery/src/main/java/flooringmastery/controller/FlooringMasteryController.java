@@ -41,6 +41,9 @@ public class FlooringMasteryController {
                         exportAllData();
                         break;
                     case 6:
+                        exportDataWithDates();
+                        break;
+                    case 7:
                         keepRunning = false;
                         break;
                     default:
@@ -146,5 +149,10 @@ public class FlooringMasteryController {
     public void exportAllData() throws FlooringMasteryPersistenceException {
         service.exportAllData();
         view.displayExportSuccess();
+    }
+
+    public void exportDataWithDates() throws FlooringMasteryPersistenceException {
+        service.exportDataWithDates();
+        view.displayExportWithDatesSuccess();
     }
 }

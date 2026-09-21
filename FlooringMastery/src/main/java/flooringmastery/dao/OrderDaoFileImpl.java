@@ -55,6 +55,75 @@ public class OrderDaoFileImpl implements OrderDao {
         writeEverythingToFIle(date);
     }
 
+
+    @Override
+    public void exportDataWithDates() throws FlooringMasteryPersistenceException {
+
+        ArrayList<String> orderDates = getOrderFileDates();
+
+        final String HEADER = "OrderNumber" + DELIMITER
+                + "CustomerName" + DELIMITER
+                + "State" + DELIMITER
+                + "TaxRate" + DELIMITER
+                + "ProductType" + DELIMITER
+                + "Area" + DELIMITER
+                + "CostPerSquareFoot" + DELIMITER
+                + "LaborCostPerSquareFoot" + DELIMITER
+                + "MaterialCost" + DELIMITER
+                + "LaborCost" + DELIMITER
+                + "Tax" + DELIMITER
+                + "Total" + DELIMITER
+                + "OrderDate";
+
+        final DateTimeFormatter EXPORT_DATE = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+
+        // making sure the backup folder exists
+        File backupFile = new File(BACKUP_FILE);
+        File backupDir = backupFile.getParentFile();
+        if (backupDir != null && !backupDir.exists()) {
+            backupDir.mkdirs(); // mkdir
+        }
+
+        try (BufferedWriter fw = new BufferedWriter(new FileWriter(BACKUP_FILE))) {
+
+            fw.write(HEADER);
+            fw.newLine();
+
+            for (String orderDateString : orderDates) {
+
+                LocalDate date = stringToDate(orderDateString);
+                if (date == null) continue;
+
+                File orderFile = new File(ORDER_FOLDER + dateToFileName(date));
+                if (!orderFile.exists()) continue;
+
+                loadOrdersForDate(date);
+
+                for (Order order : order_number_map_order.values()) {
+                    fw.write(order.getOrderNumber() + DELIMITER
+                            + order.getCustomerName() + DELIMITER
+                            + order.getState() + DELIMITER
+                            + order.getTaxRate() + DELIMITER
+                            + order.getProductType() + DELIMITER
+                            + order.getArea() + DELIMITER
+                            + order.getCostPerSquareFoot() + DELIMITER
+                            + order.getLabourCostPerSquareFoot() + DELIMITER
+                            + order.getMaterialCost() + DELIMITER
+                            + order.getLabourCost() + DELIMITER
+                            + order.getTax() + DELIMITER
+                            + order.getTotal() + DELIMITER
+                            + date.format(EXPORT_DATE));
+                    fw.newLine();
+                }
+            }
+
+        } catch (IOException e) {
+            throw new FlooringMasteryPersistenceException(
+                    "Could not write export file: " + BACKUP_FILE, e);
+        }
+    }
+
+
     @Override
     public void exportAllData() throws FlooringMasteryPersistenceException {
         Map<String, Tax> taxes = taxDaoFile.getAllTaxes();

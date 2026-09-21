@@ -21,9 +21,7 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     private ProductDao productDaoFile;
     private TaxDao taxDaoFile;
 
-    public FlooringMasteryServiceLayerImpl(OrderDao orderDao,
-                                           ProductDao productDaoFile,
-                                           TaxDao taxDaoFile) {
+    public FlooringMasteryServiceLayerImpl(OrderDao orderDao, ProductDao productDaoFile, TaxDao taxDaoFile) {
         this.orderDao = orderDao;
         this.productDaoFile = productDaoFile;
         this.taxDaoFile = taxDaoFile;
@@ -93,5 +91,10 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     @Override
     public void exportAllData()  throws FlooringMasteryPersistenceException{
         orderDao.exportAllData();
+    }
+
+    @Override
+    public void exportDataWithDates() throws FlooringMasteryPersistenceException {
+        orderDao.exportDataWithDates();
     }
 }
