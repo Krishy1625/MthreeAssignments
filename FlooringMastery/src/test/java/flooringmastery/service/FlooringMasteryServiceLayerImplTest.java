@@ -146,6 +146,9 @@ class FlooringMasteryServiceLayerImplTest {
         @Override public void exportDataWithDates() { }
     }
 
+    //stub - fake object give to the code so it doesn't need the real thing
+    //SMT
+
     static class StubTaxDao implements TaxDao {
         private final Map<String, Tax> map;
         StubTaxDao(Map<String, Tax> map) { this.map = map; }
