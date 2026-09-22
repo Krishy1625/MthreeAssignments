@@ -14,11 +14,23 @@ public class ProductDaoFileImpl implements ProductDao {
     private static final String PRODUCT_FILE= "src/main/resources/SampleFileData/Data/Products.txt";
     private static final String DELIMITER = ",";
 
+    private final String productFile;
     Map<String, Product> productNameMapProductObject = new HashMap<>();
+
+
+    public ProductDaoFileImpl() {
+        this(PRODUCT_FILE);
+    }
+
+    // for testing
+    public ProductDaoFileImpl(String productFile) {
+        this.productFile = productFile;
+    }
+
 
     @Override
     public void loadFile() {
-        File product_file = new File(PRODUCT_FILE);
+        File product_file = new File(productFile);
 
         try(Scanner sc = new Scanner(product_file)){
 
@@ -43,7 +55,7 @@ public class ProductDaoFileImpl implements ProductDao {
             }
         }
         catch (FileNotFoundException e) {
-            System.out.println("Product file not found: " + PRODUCT_FILE);
+            System.out.println("Product file not found: " + productFile);
         }
     }
 

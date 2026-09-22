@@ -15,9 +15,13 @@ import java.util.stream.Collectors;
 
 public class OrderDaoFileImpl implements OrderDao {
 
+    public static final String DEFAULT_ORDER_FOLDER = "src/main/resources/SampleFileData/Orders/";
+    public static final String DEFAULT_BACKUP_FILE = "src/main/resources/SampleFileData/Backup/DataExport.txt";
+
     public final String DELIMITER = "::";
-    public static final String ORDER_FOLDER = "src/main/resources/SampleFileData/Orders/";
-    public final String BACKUP_FILE = "src/main/resources/SampleFileData/Backup/DataExport.txt";
+
+    private final String orderFolder;
+    private final String backupFile;
 
     private ProductDao productDaoFile;
     private TaxDao taxDaoFile;
@@ -25,8 +29,15 @@ public class OrderDaoFileImpl implements OrderDao {
     private Map<Integer, Order> orderNumberMapOrder = new HashMap<>();
 
     public OrderDaoFileImpl(ProductDao productDaoFile, TaxDao taxDaoFile) {
+        this(productDaoFile, taxDaoFile, DEFAULT_ORDER_FOLDER, DEFAULT_BACKUP_FILE);
+    }
+
+    // for testing
+    public OrderDaoFileImpl(ProductDao productDaoFile, TaxDao taxDaoFile, String orderFolder, String backupFile) {
         this.productDaoFile = productDaoFile;
         this.taxDaoFile = taxDaoFile;
+        this.orderFolder = orderFolder;
+        this.backupFile = backupFile;
     }
 
     @Override
@@ -36,7 +47,7 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     @Override
-    public Order getOrder(LocalDate date, int orderNumber) throws FlooringMasteryPersistenceException{
+    public Order getOrder(LocalDate date, int orderNumber) throws FlooringMasteryPersistenceException {
         loadOrdersForDate(date);
         return orderNumberMapOrder.get(orderNumber);
     }
@@ -45,16 +56,15 @@ public class OrderDaoFileImpl implements OrderDao {
     public void saveOrder(LocalDate date, Order order) throws FlooringMasteryPersistenceException {
         loadOrdersForDate(date);
         orderNumberMapOrder.put(order.getOrderNumber(), order);
-        writeEverythingToFIle(date);
+        writeEverythingToFile(date);
     }
 
     @Override
-    public void deleteOrder(LocalDate date, int orderNumber) throws FlooringMasteryPersistenceException{
+    public void deleteOrder(LocalDate date, int orderNumber) throws FlooringMasteryPersistenceException {
         loadOrdersForDate(date);
         orderNumberMapOrder.remove(orderNumber);
-        writeEverythingToFIle(date);
+        writeEverythingToFile(date);
     }
-
 
     @Override
     public void exportDataWithDates() throws FlooringMasteryPersistenceException {
@@ -77,14 +87,13 @@ public class OrderDaoFileImpl implements OrderDao {
 
         final DateTimeFormatter EXPORT_DATE = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
-        // making sure the backup folder exists
-        File backupFile = new File(BACKUP_FILE);
-        File backupDir = backupFile.getParentFile();
+        File backup = new File(backupFile);
+        File backupDir = backup.getParentFile();
         if (backupDir != null && !backupDir.exists()) {
-            backupDir.mkdirs(); // mkdir
+            backupDir.mkdirs();
         }
 
-        try (BufferedWriter fw = new BufferedWriter(new FileWriter(BACKUP_FILE))) {
+        try (BufferedWriter fw = new BufferedWriter(new FileWriter(backupFile))) {
 
             fw.write(HEADER);
             fw.newLine();
@@ -94,7 +103,7 @@ public class OrderDaoFileImpl implements OrderDao {
                 LocalDate date = stringToDate(orderDateString);
                 if (date == null) continue;
 
-                File orderFile = new File(ORDER_FOLDER + dateToFileName(date));
+                File orderFile = new File(orderFolder + dateToFileName(date));
                 if (!orderFile.exists()) continue;
 
                 loadOrdersForDate(date);
@@ -115,16 +124,13 @@ public class OrderDaoFileImpl implements OrderDao {
                             + date.format(EXPORT_DATE));
                     fw.newLine();
                 }
-
             }
 
         } catch (IOException e) {
             throw new FlooringMasteryPersistenceException(
-                    "Could not write export file: " + BACKUP_FILE, e);
+                    "Could not write export file: " + backupFile, e);
         }
-
     }
-
 
     @Override
     public void exportAllData() throws FlooringMasteryPersistenceException {
@@ -136,7 +142,7 @@ public class OrderDaoFileImpl implements OrderDao {
         final String PRODUCTS_HEADER = "ProductType,CostPerSquareFoot,LaborCostPerSquareFoot";
         final String COMMA = ",";
 
-        try (BufferedWriter fw = new BufferedWriter(new FileWriter(BACKUP_FILE))) {
+        try (BufferedWriter fw = new BufferedWriter(new FileWriter(backupFile))) {
 
             fw.write("*** DISPLAYING TAX INFORMATION ***");
             fw.newLine(); fw.newLine();
@@ -174,7 +180,7 @@ public class OrderDaoFileImpl implements OrderDao {
                 fw.newLine(); fw.newLine();
 
                 String fileName = dateToFileName(date);
-                File orderFile = new File(ORDER_FOLDER + fileName);
+                File orderFile = new File(orderFolder + fileName);
 
                 if (!orderFile.exists()) {
                     fw.write("No order file found for " + date);
@@ -196,22 +202,22 @@ public class OrderDaoFileImpl implements OrderDao {
             }
 
         } catch (IOException e) {
-            throw new FlooringMasteryPersistenceException("Could not write export file: " + BACKUP_FILE, e);
+            throw new FlooringMasteryPersistenceException(
+                    "Could not write export file: " + backupFile, e);
         }
-
     }
 
     // io helpers
 
-    public static ArrayList<String> getOrderFileDates() {
-        File folder = new File(ORDER_FOLDER);
+    public ArrayList<String> getOrderFileDates() {
+        File folder = new File(orderFolder);
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".txt"));
 
         if (files == null) return new ArrayList<>();
 
         return (ArrayList<String>) Arrays.stream(files)
                 .map(File::getName)
-                .map((name) -> name.substring(
+                .map(name -> name.substring(
                         "Orders_".length(),
                         name.length() - ".txt".length()))
                 .collect(Collectors.toList());
@@ -236,14 +242,13 @@ public class OrderDaoFileImpl implements OrderDao {
 
     public void loadOrdersForDate(LocalDate date) throws FlooringMasteryPersistenceException {
         orderNumberMapOrder.clear();
-        File file = new File(ORDER_FOLDER + dateToFileName(date));
+        File file = new File(orderFolder + dateToFileName(date));
 
         try {
             Files.lines(file.toPath())
                     .skip(1)
                     .map(String::trim)
-                    .forEach((line) -> {
-
+                    .forEach(line -> {
                         try {
                             String[] split = line.split(DELIMITER);
                             Order order = createOrder(split);
@@ -251,7 +256,6 @@ public class OrderDaoFileImpl implements OrderDao {
                         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                             System.out.println("Skipping malformed order line: " + line);
                         }
-
                     });
 
         } catch (IOException e) {
@@ -259,44 +263,38 @@ public class OrderDaoFileImpl implements OrderDao {
         }
     }
 
-    public void writeEverythingToFIle(LocalDate date) throws FlooringMasteryPersistenceException {
+    public void writeEverythingToFile(LocalDate date) throws FlooringMasteryPersistenceException {
         final String HEADER = "OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total";
 
-        try {
-            BufferedWriter fw = new BufferedWriter(new FileWriter(ORDER_FOLDER + dateToFileName(date)));
+        File orderFile = new File(orderFolder + dateToFileName(date));
+        File parent = orderFile.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+
+        try (BufferedWriter fw = new BufferedWriter(new FileWriter(orderFile))) {
             fw.write(HEADER);
             fw.newLine();
 
-            orderNumberMapOrder.forEach((key, value) -> {
-
-                try {
-                    fw.write(String.valueOf(value.getOrderNumber()) + DELIMITER
-                            + value.getCustomerName() + DELIMITER
-                            + value.getState() + DELIMITER
-                            + value.getTaxRate() + DELIMITER
-                            + value.getProductType() + DELIMITER
-                            + value.getArea() + DELIMITER
-                            + value.getCostPerSquareFoot() + DELIMITER
-                            + value.getLabourCostPerSquareFoot() + DELIMITER
-                            + value.getMaterialCost() + DELIMITER
-                            + value.getLabourCost() + DELIMITER
-                            + value.getTax() + DELIMITER
-                            + value.getTotal());
-                    fw.newLine();
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-            });
-
-            fw.flush();
-            fw.close();
+            for (Order value : orderNumberMapOrder.values()) {
+                fw.write(value.getOrderNumber() + DELIMITER
+                        + value.getCustomerName() + DELIMITER
+                        + value.getState() + DELIMITER
+                        + value.getTaxRate() + DELIMITER
+                        + value.getProductType() + DELIMITER
+                        + value.getArea() + DELIMITER
+                        + value.getCostPerSquareFoot() + DELIMITER
+                        + value.getLabourCostPerSquareFoot() + DELIMITER
+                        + value.getMaterialCost() + DELIMITER
+                        + value.getLabourCost() + DELIMITER
+                        + value.getTax() + DELIMITER
+                        + value.getTotal());
+                fw.newLine();
+            }
+        } catch (IOException e) {
+            throw new FlooringMasteryPersistenceException(
+                    "Could not write order file for: " + date, e);
         }
-        catch (IOException e) {
-            throw new FlooringMasteryPersistenceException("Could not write order file for: " + date, e);
-        }
-
     }
 
     private static Order createOrder(String[] order_split) {

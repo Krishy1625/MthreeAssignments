@@ -51,7 +51,11 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
         Map<String, Tax> taxes_map = taxDaoFile.getAllTaxes();
         Map<String, Product> product_map = productDaoFile.getAllProducts();
 
-        Tax tax = taxes_map.get(order.getState().toLowerCase());
+        Tax tax = taxes_map.values().stream()
+                .filter(t -> t.getStateAbbreviation().equalsIgnoreCase(order.getState()) || t.getStateName().equalsIgnoreCase(order.getState()))
+                .findFirst()
+                .orElse(null);
+
         Product product = product_map.get(order.getProductType().toLowerCase());
 
         if (tax == null) {

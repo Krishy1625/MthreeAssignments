@@ -11,13 +11,23 @@ public class TaxDaoFileImpl implements TaxDao {
 
     private static final String TAX_FILE= "src/main/resources/SampleFileData/Data/Taxes.txt";
     private static final String DELIMITER = ",";
+    private final String taxFile;
 
     Map<String, Tax> stateMapTaxes = new HashMap<>();
+
+    public TaxDaoFileImpl() {
+        this(TAX_FILE);
+    }
+
+    // for testing
+    public TaxDaoFileImpl(String taxFile) {
+        this.taxFile = taxFile;
+    }
 
     @Override
     public void loadFile() {
 
-        File tax_file = new File(TAX_FILE);
+        File tax_file = new File(taxFile);
 
         try(Scanner sc = new Scanner(tax_file)){
 
@@ -40,7 +50,7 @@ public class TaxDaoFileImpl implements TaxDao {
 
         }
         catch (FileNotFoundException e) {
-            System.out.println("Tax file not found: " + TAX_FILE);
+            System.out.println("Tax file not found: " + taxFile);
         }
 
     }
