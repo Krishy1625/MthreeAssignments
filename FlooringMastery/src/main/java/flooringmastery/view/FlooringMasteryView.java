@@ -15,6 +15,12 @@ public class FlooringMasteryView {
 
     //menu stuff
 
+
+
+    public void displayMessage(String message) {
+        System.out.println(message);
+    }
+
     public int displayMainMenuAndGetSelection() {
         io.print("");
         io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");

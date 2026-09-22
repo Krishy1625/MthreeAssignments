@@ -59,6 +59,9 @@ public class FlooringMasteryController {
     }
 
     public void displayOrders() throws FlooringMasteryPersistenceException{
+        view.displayMessage("Displaying orders...");
+        view.displayMessage("");
+
         LocalDate date = view.getOrderDate();
         List<Order> orders = service.getOrdersForDate(date);
         if (orders.isEmpty()) {
@@ -69,6 +72,9 @@ public class FlooringMasteryController {
     }
 
     public void addOrder() throws FlooringMasteryPersistenceException, FlooringMasteryDataValidationException{
+        view.displayMessage("Adding a new order...");
+        view.displayMessage("");
+
         LocalDate date = view.getFutureOrderDate();
 
         Order order = view.getNewOrderInfo();
@@ -87,6 +93,10 @@ public class FlooringMasteryController {
     }
 
     public void editOrder() throws FlooringMasteryPersistenceException, FlooringMasteryDataValidationException{
+
+        view.displayMessage("Edit Order Selected ...");
+        view.displayMessage("");
+
         LocalDate date = view.getOrderDate();
 
         List<Order> orders = service.getOrdersForDate(date);
@@ -118,6 +128,10 @@ public class FlooringMasteryController {
     }
 
     public void removeOrder() throws FlooringMasteryPersistenceException{
+
+        view.displayMessage("Removing Order Selected ...");
+        view.displayMessage("");
+
         LocalDate date = view.getOrderDate();
 
         List<Order> orders = service.getOrdersForDate(date);

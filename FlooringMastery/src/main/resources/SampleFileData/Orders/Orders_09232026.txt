@@ -1,2 +1,4 @@
 OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
 1::Krish::texas::4.45::wood::100::5.15::4.75::515.00::475.00::44.055000::1034.055000
+2::james::seattle::7.40::wood::300::5.15::4.75::1545.00::1425.00::219.78000::3189.78000
+3::me::seattle::7.40::carpet::200::2.25::2.10::450.00::420.00::64.38000::934.38000
