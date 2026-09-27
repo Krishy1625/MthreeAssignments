@@ -217,7 +217,7 @@ public class OrderDaoFileImpl implements OrderDao {
 
         return (ArrayList<String>) Arrays.stream(files)
                 .map(File::getName)
-                .map(name -> name.substring(
+                .map(name -> name.substring(  // basically Orders_06122013.txt.substring(7, 15)
                         "Orders_".length(),
                         name.length() - ".txt".length()))
                 .collect(Collectors.toList());
