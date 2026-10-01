@@ -24,7 +24,7 @@ public class StudentServiceImpl implements StudentServiceInterface {
     public List<Student> getAllStudents() {
         //YOUR CODE STARTS HERE
 
-        return null;
+        return studentDao.getAllStudents();
 
         //YOUR CODE ENDS HERE
     }
@@ -32,7 +32,7 @@ public class StudentServiceImpl implements StudentServiceInterface {
     public Student getStudentById(int id) {
         //YOUR CODE STARTS HERE
 
-        return null;
+        return studentDao.findStudentById(id);
 
         //YOUR CODE ENDS HERE
     }
@@ -40,15 +40,24 @@ public class StudentServiceImpl implements StudentServiceInterface {
     public Student addNewStudent(Student student) {
         //YOUR CODE STARTS HERE
 
-        return null;
+        return studentDao.createNewStudent(student);
 
         //YOUR CODE ENDS HERE
     }
 
     public Student updateStudentData(int id, Student student) {
         //YOUR CODE STARTS HERE
+        // "IDs do not match, student not updated"
 
-        return null;
+        if (student.getStudentId() != id) {
+            student.setStudentFirstName("IDs do not match, student not updated");
+            student.setStudentLastName("IDs do not match, student not updated");
+        }
+        else{
+            studentDao.updateStudent(student);
+        }
+
+        return student;
 
         //YOUR CODE ENDS HERE
     }
@@ -56,7 +65,7 @@ public class StudentServiceImpl implements StudentServiceInterface {
     public void deleteStudentById(int id) {
         //YOUR CODE STARTS HERE
 
-
+        studentDao.deleteStudent(id);
 
         //YOUR CODE ENDS HERE
     }
@@ -64,7 +73,7 @@ public class StudentServiceImpl implements StudentServiceInterface {
     public void deleteStudentFromCourse(int studentId, int courseId) {
         //YOUR CODE STARTS HERE
 
-
+        studentDao.deleteStudentFromCourse(studentId, courseId);
 
         //YOUR CODE ENDS HERE
     }
@@ -72,6 +81,7 @@ public class StudentServiceImpl implements StudentServiceInterface {
     public void addStudentToCourse(int studentId, int courseId) {
         //YOUR CODE STARTS HERE
 
+        studentDao.addStudentToCourse(studentId, courseId);
 
         //YOUR CODE ENDS HERE
     }
