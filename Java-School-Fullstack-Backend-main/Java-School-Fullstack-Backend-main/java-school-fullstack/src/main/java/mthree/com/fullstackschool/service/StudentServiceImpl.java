@@ -15,6 +15,7 @@ public class StudentServiceImpl implements StudentServiceInterface {
 
     private StudentDao studentDao;
 
+    @Autowired
     public StudentServiceImpl(StudentDao studentDao) {
         this.studentDao = studentDao;
     }
