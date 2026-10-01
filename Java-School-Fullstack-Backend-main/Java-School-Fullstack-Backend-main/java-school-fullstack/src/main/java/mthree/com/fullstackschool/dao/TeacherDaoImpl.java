@@ -23,8 +23,11 @@ public class TeacherDaoImpl implements TeacherDao {
     public Teacher createNewTeacher(Teacher teacher) {
         //YOUR CODE STARTS HERE
 
-        return null;
+        final String CREATE_NEW_TEACHER = "INSERT INTO teacher (tFName, tLName, dept) VALUES (?, ?, ?)";
 
+        jdbcTemplate.update(CREATE_NEW_TEACHER, teacher.getTeacherFName(), teacher.getTeacherLName(), teacher.getDept());
+
+        return teacher;
         //YOUR CODE ENDS HERE
     }
 
@@ -32,7 +35,9 @@ public class TeacherDaoImpl implements TeacherDao {
     public List<Teacher> getAllTeachers() {
         //YOUR CODE STARTS HERE
 
-        return null;
+        final String GET_ALL_TEACHERS = "SELECT * FROM teacher";
+
+        return jdbcTemplate.query(GET_ALL_TEACHERS, new TeacherMapper());
 
         //YOUR CODE ENDS HERE
     }
@@ -41,7 +46,9 @@ public class TeacherDaoImpl implements TeacherDao {
     public Teacher findTeacherById(int id) {
         //YOUR CODE STARTS HERE
 
-        return null;
+        final String FIND_TEACHER_BY_ID = "SELECT * FROM teacher WHERE tid = ?";
+
+        return jdbcTemplate.queryForObject(FIND_TEACHER_BY_ID, new TeacherMapper(), id);
 
         //YOUR CODE ENDS HERE
     }
@@ -50,6 +57,13 @@ public class TeacherDaoImpl implements TeacherDao {
     public void updateTeacher(Teacher t) {
         //YOUR CODE STARTS HERE
 
+        //        final String UPDATE_STUDENT = "UPDATE student SET fName = ?, lName = ? WHERE sid = ?";
+        //
+        //        jdbcTemplate.update(UPDATE_STUDENT, student.getStudentFirstName(), student.getStudentLastName(), student.getStudentId());
+
+        final String UPDATE_TEACHER = "UPDATE teacher SET tFName = ?, tLName = ?, dept=? WHERE tid = ?";
+
+        jdbcTemplate.update(UPDATE_TEACHER, t.getTeacherFName(), t.getTeacherLName(), t.getDept(), t.getTeacherId());
 
         //YOUR CODE ENDS HERE
     }
@@ -58,6 +72,9 @@ public class TeacherDaoImpl implements TeacherDao {
     public void deleteTeacher(int id) {
         //YOUR CODE STARTS HERE
 
+        final String DELETE_TEACHER = "DELETE FROM teacher WHERE tid = ?";
+
+        jdbcTemplate.update(DELETE_TEACHER, id);
 
         //YOUR CODE ENDS HERE
     }
